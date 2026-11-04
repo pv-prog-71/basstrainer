@@ -9,64 +9,45 @@
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="apple-touch-icon" href="icon-180.png">
 <style>
-:root{color-scheme:dark;--bg:#0b0b0a;--pan:#151512;--line:#2e2c24;--ink:#e8d9b2;--mut:#9a8a62;--br:#d8b673;--ok:#3ccfa8;--bad:#ff6670;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-*{box-sizing:border-box}html{height:100%;background:var(--bg)}
-body{margin:0;color:var(--ink);font:15px/1.45 "Avenir Next","Segoe UI",system-ui,sans-serif;background:repeating-linear-gradient(45deg,#0b0b0a 0 3px,#0e0e0c 3px 6px)}
-main{max-width:1060px;margin:0 auto;padding:16px 14px 40px}
-.plate{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 20px;border-radius:8px;color:#2a1c06;background:linear-gradient(115deg,#8c6a30,#d9bb77 35%,#b48d45 55%,#e0c481 80%,#8a6a32);box-shadow:0 2px 0 #000,inset 0 1px 0 #fff6}
-.plate h1{margin:0;font:700 30px/1 Georgia,"Rockwell",serif;text-shadow:0 1px 0 #fff6}
-.plate span{font-size:12px;letter-spacing:.2em;text-transform:uppercase}
-.cols{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:14px;margin:14px 0}
-@media(max-width:760px){.cols{grid-template-columns:1fr}}
-.panel{background:var(--pan);border:1px solid var(--line);border-radius:12px;padding:16px}
-h2{margin:0 0 12px;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--br)}
-.tag{float:right;font:12px ui-monospace,monospace;color:var(--br);border:1px solid #5a3a1a;padding:3px 8px;border-radius:4px}
-.board{border-radius:6px;overflow:hidden;box-shadow:inset 0 0 14px #000}
-canvas{display:block;width:100%;height:250px;background:linear-gradient(#6b3a20,#4a2615)}
-.bar{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
-button,select,input[type=number],textarea{font:inherit;color:var(--ink);background:#1b1a15;border:1px solid #5a3a1a;border-radius:6px;padding:9px 14px}
-button{cursor:pointer;letter-spacing:.08em;text-transform:uppercase;font-size:13px}
+:root{color-scheme:dark;--bg:#0b0b0a;--pan:#151512;--line:#2e2c24;--ink:#e8d9b2;--mut:#9a8a62;--br:#d8b673}
+*{box-sizing:border-box}html,body{height:100%;margin:0;background:var(--bg);overscroll-behavior:none}
+body{color:var(--ink);font:13px/1.3 "Avenir Next","Segoe UI",system-ui,sans-serif}
+main{height:100dvh;display:flex;flex-direction:column;gap:6px;padding:max(6px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}
+.top,.bot{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
+.plate{margin:0;padding:6px 12px;border-radius:6px;font:700 18px/1 Georgia,serif;color:#2a1c06;white-space:nowrap;background:linear-gradient(115deg,#8c6a30,#d9bb77 35%,#b48d45 55%,#e0c481 80%,#8a6a32)}
+button,select,input[type=number]{font:inherit;color:var(--ink);background:#1b1a15;border:1px solid #5a3a1a;border-radius:6px;padding:7px 10px}
+button{cursor:pointer;letter-spacing:.06em;text-transform:uppercase;font-size:12px;white-space:nowrap}
 button.main{background:var(--br);color:#1a1208;border-color:var(--br);font-weight:700}
-button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--br);outline-offset:2px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px 20px}
-label{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
-label b{color:var(--br)}
-input[type=range]{width:100%;accent-color:var(--br)}
-.cab{text-align:center}
-.spk{aspect-ratio:1;border-radius:8px;display:grid;place-items:center;border:2px solid #3a382e;background:repeating-linear-gradient(0deg,#0d0d0b 0 2px,#151512 2px 4px)}
-.spk div{width:68%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#050505 0 22%,#1b1b18 23% 40%,#0c0c0a 41% 60%,#222 61%);box-shadow:0 0 18px #000}
-.spk b{font:700 30px Georgia,serif;color:var(--br)}
-#hz{margin:8px 0 0;font:12px ui-monospace,monospace;color:var(--mut);min-height:1.4em}
-textarea{width:100%;min-height:64px;font:13px ui-monospace,monospace}
-.row{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:12px}
-#res{display:none;margin-top:14px}#res strong{font:700 36px Georgia,serif;color:var(--br)}
-small{color:var(--mut)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--br);outline-offset:2px}
+select{max-width:150px}
+.tag{font:11px ui-monospace,monospace;color:var(--br);border:1px solid #5a3a1a;padding:3px 7px;border-radius:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+.spk{display:flex;align-items:center;gap:6px;margin-left:auto;padding:2px 10px;border-radius:20px;background:#050505;border:2px solid #3a382e}
+.spk b{font:700 18px Georgia,serif;color:var(--br);min-width:2.6em;text-align:center}.spk small{color:var(--mut);font:10px ui-monospace,monospace;min-width:4.5em}
+.board{position:relative;flex:1;min-height:0;border-radius:8px;overflow:hidden;box-shadow:inset 0 0 14px #000;background:linear-gradient(#6b3a20,#4a2615)}
+canvas{display:block;width:100%;height:100%}
+#res{display:none;position:absolute;inset:0;margin:auto;width:max-content;height:max-content;padding:12px 22px;border-radius:10px;background:#151512ee;border:1px solid var(--br);text-align:center}
+#res strong{font:700 34px Georgia,serif;color:var(--br)}
+label{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);flex:1;min-width:0}
+label b{color:var(--br)}label input[type=range]{width:100%;margin:2px 0 0;accent-color:var(--br)}
+label input[type=number]{width:100%;padding:4px 6px}label.sm{flex:0 0 62px}
+#rot{display:none;position:fixed;inset:0;z-index:9;align-items:center;justify-content:center;background:var(--bg);font:700 20px Georgia,serif;color:var(--br);text-align:center;padding:30px}
+@media (orientation:portrait){#rot{display:flex}}
+@media (max-height:420px){.plate{font-size:15px;padding:5px 9px}button,select{padding:5px 8px}}
 </style></head><body><main>
-<header class="plate"><h1>BassTrainer</h1><span>Amplificatore · Studio del basso</span></header>
-<div class="cols">
-<section class="panel"><h2>Tastiera del basso <span class="tag" id="live">Microfono spento</span></h2>
-<div class="board"><canvas id="cv" aria-label="Tab per basso a quattro corde"></canvas></div>
-<div class="bar"><button id="play" class="main">Play</button><button id="rst">Dall’inizio</button><button id="mic">Attiva microfono</button></div>
-<div class="grid">
+<div class="top"><h1 class="plate">BassTrainer</h1><select id="song" aria-label="Brano"></select>
+<button id="play" class="main">Play</button><button id="rst" aria-label="Dall’inizio">⟲</button><button id="mic">Microfono</button>
+<button id="mp3b">Carica mp3</button><input id="mp3" type="file" accept="audio/*" hidden>
+<span id="live" class="tag">Microfono spento</span><span class="spk"><b id="note">—</b><small id="hz"></small></span></div>
+<div class="board"><canvas id="cv" aria-label="Tab per basso a quattro corde"></canvas><div id="res" aria-live="polite"></div></div>
+<div class="bot">
 <label>Posizione <b id="vp"></b><input id="pos" type="range" min="-2" max="20" step="0.05" value="-2"></label>
 <label>Velocità <b id="vs">100%</b><input id="spd" type="range" min="0.4" max="1.25" step="0.05" value="1"></label>
-<label>Ritardo microfono <b id="vl">120 ms</b><input id="lat" type="range" min="0" max="400" step="10" value="120"></label>
+<label>Ritardo mic <b id="vl">120 ms</b><input id="lat" type="range" min="0" max="400" step="10" value="120"></label>
 <label>Base / mp3 <b id="vb">60%</b><input id="bas" type="range" min="0" max="100" step="5" value="60"></label>
-<label><input id="oct" type="checkbox" checked> Accetta anche l’ottava</label>
-</div><small>Usa le cuffie per la base, così il microfono sente solo il tuo basso.</small></section>
-<section class="panel cab"><h2>Cabinet · 1×15</h2><div class="spk"><div><b id="note">—</b></div></div><p id="hz"></p></section>
-</div>
-<section class="panel"><h2>Brano</h2>
-<div class="row"><label>Brano<br><select id="song"></select></label>
-<label>Tempo (BPM)<br><input id="bpm" type="number" min="40" max="240" style="width:90px"></label>
-<label>Il tuo mp3<br><input id="mp3" type="file" accept="audio/*"></label>
-<label>Inizio brano nell’mp3 (s)<br><input id="off" type="number" step="0.1" value="0" style="width:90px"></label></div>
-<label>Oppure scrivi la tua tab: corda+tasto:battiti, separati da spazio (pausa = -:1)
-<textarea id="tab" placeholder="E3:1 E3:1 A0:2 D2:1 -:1 G0:1"></textarea></label>
-<div class="bar"><button id="use">Usa questa tab</button></div>
-<small>L’mp3 resta sul tuo dispositivo e non viene caricato da nessuna parte.</small></section>
-<div id="res" class="panel" aria-live="polite"></div>
-</main>
+<label class="sm">BPM<input id="bpm" type="number" min="40" max="240"></label>
+<label class="sm">Inizio mp3 s<input id="off" type="number" step="0.1" value="0"></label>
+<label class="sm"><input id="oct" type="checkbox" checked> Ottava ok</label></div>
+<div id="rot">Ruota il telefono in orizzontale</div></main>
 <script>
 const OPEN=[43,38,33,28],LBL=["G","D","A","E"],NM=["Do","Do#","Re","Re#","Mi","Fa","Fa#","Sol","Sol#","La","La#","Si"];
 const SONGS={
@@ -80,10 +61,9 @@ const au=new Audio();au.preservesPitch=true;
 const sel=$("song");for(const k in SONGS){const o=document.createElement("option");o.value=k;o.textContent=SONGS[k].n;sel.append(o)}
 function setNotes(list,b,c){let t=0;notes=list.map(([m,d,s])=>{if(s===undefined){s=0;for(let i=0;i<4;i++)if(OPEN[i]<=m){s=i;break}}const n={m,s,f:m-OPEN[s],t,d,st:0};t+=d;return n});end=t;bpm=b;ch=c||[];$("bpm").value=b;$("pos").max=end;playing=false;au.pause();$("play").textContent="Play";$("res").style.display="none";seek(-2)}
 sel.onchange=()=>{const S=SONGS[sel.value];setNotes(S.a,S.bpm,S.ch)};
-$("use").onclick=()=>{const L=[];for(const w of $("tab").value.trim().split(/\s+/)){let r=w.match(/^([EADG])(\d+):([\d.]+)$/i);if(r){const s=LBL.indexOf(r[1].toUpperCase());L.push([OPEN[s]+ +r[2],+r[3],s]);continue}r=w.match(/^-:([\d.]+)$/);if(r){L.push([-99,+r[1],0]);continue}if(w){$("live").textContent="Non capisco: "+w;return}}
- if(!L.length)return;setNotes(L,+$("bpm").value||80,[]);notes.forEach(n=>{if(n.m<0)n.st=3});$("live").textContent="Tab caricata"};
 $("bpm").oninput=e=>{bpm=+e.target.value||bpm};
-$("mp3").onchange=e=>{const f=e.target.files[0];if(!f)return;au.src=URL.createObjectURL(f);hasMp3=true;$("live").textContent="mp3: "+f.name.slice(0,24)};
+$("mp3b").onclick=()=>$("mp3").click();
+$("mp3").onchange=e=>{const f=e.target.files[0];if(!f)return;au.src=URL.createObjectURL(f);hasMp3=true;$("mp3b").textContent="mp3 ✓";$("live").textContent="mp3: "+f.name;seek(-2)};
 $("play").onclick=()=>{initAudio();if(pos>=end)seek(-2);playing=!playing;if(playing)nb=Math.ceil(pos);else au.pause();$("play").textContent=playing?"Pausa":"Play";$("res").style.display="none"};
 $("rst").onclick=()=>seek(-2);
 function seek(p){pos=p;nb=Math.ceil(p);for(const n of notes)if(n.t>=p-.5&&n.m>=0)n.st=0;$("pos").value=p;if(hasMp3)au.currentTime=Math.max(0,p*60/bpm+ +$("off").value)}
@@ -126,17 +106,17 @@ function frame(ts){const dt=Math.min(.1,(ts-last)/1000||0);last=ts;const sp=+$("
   $("pos").value=pos;if(pos>end+.5)finish();
   if(hasMp3){au.playbackRate=sp;au.volume=$("bas").value/100;const s=pos*60/bpm+ +$("off").value;if(pos<0)au.pause();else{if(Math.abs(au.currentTime-s)>.25)au.currentTime=s;if(au.paused)au.play().catch(()=>{})}}}
  $("vp").textContent=Math.max(0,Math.floor(pos))+" / "+Math.round(end);draw();requestAnimationFrame(frame)}
-function draw(){const dpr=devicePixelRatio||1,w=cv.clientWidth,h=250;if(cv.width!==Math.round(w*dpr)){cv.width=Math.round(w*dpr);cv.height=h*dpr}
- cx.setTransform(dpr,0,0,dpr,0,0);cx.clearRect(0,0,w,h);const nx=w*.2,ppb=Math.max(70,Math.min(110,w/9)),ys=[40,95,150,205];
- cx.font="700 15px system-ui,sans-serif";cx.textBaseline="middle";cx.textAlign="center";
- for(let b=Math.ceil(pos-nx/ppb);b<pos+(w-nx)/ppb;b++){const x=nx+(b-pos)*ppb;cx.strokeStyle="#d8b67355";cx.beginPath();cx.moveTo(x,18);cx.lineTo(x,230);cx.stroke()}
+function draw(){const dpr=devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr)}
+ cx.setTransform(dpr,0,0,dpr,0,0);cx.clearRect(0,0,w,h);const nx=w*.2,ppb=Math.max(70,Math.min(110,w/9)),ys=[.17,.39,.61,.83].map(v=>v*h);
+ cx.font="700 14px system-ui,sans-serif";cx.textBaseline="middle";cx.textAlign="center";
+ for(let b=Math.ceil(pos-nx/ppb);b<pos+(w-nx)/ppb;b++){const x=nx+(b-pos)*ppb;cx.strokeStyle="#d8b67355";cx.beginPath();cx.moveTo(x,4);cx.lineTo(x,h-4);cx.stroke()}
  ys.forEach((y,i)=>{cx.strokeStyle="#e4dcc0";cx.lineWidth=1.2+i*.7;cx.beginPath();cx.moveTo(34,y);cx.lineTo(w,y);cx.stroke();cx.fillStyle="#f0d9a0";cx.fillText(LBL[i],16,y)});cx.lineWidth=1;
- for(const n of notes){if(n.m<0)continue;const x=nx+(n.t-pos)*ppb,wd=Math.max(30,n.d*ppb-6),x0=Math.max(x,36);if(x+wd<34||x>w)continue;const y=ys[n.s];
+ for(const n of notes){if(n.m<0)continue;const x=nx+(n.t-pos)*ppb,wd=Math.max(28,n.d*ppb-6),x0=Math.max(x,36);if(x+wd<34||x>w)continue;const y=ys[n.s];
   cx.globalAlpha=n.st===3||(n.st===0&&x<nx-60)?.45:1;cx.fillStyle=n.st===1?"#3ccfa8":n.st===2?"#ff6670":"#e8b94c";
-  cx.beginPath();cx.roundRect(x0,y-15,wd-(x0-x),30,15);cx.fill();cx.fillStyle="#1a1208";cx.fillText(n.st===2?"×":String(n.f),x0+15,y);cx.globalAlpha=1}
- cx.strokeStyle="#fff";cx.lineWidth=2;cx.beginPath();cx.moveTo(nx,10);cx.lineTo(nx,240);cx.stroke();cx.lineWidth=1;
+  cx.beginPath();cx.roundRect(x0,y-13,wd-(x0-x),26,13);cx.fill();cx.fillStyle="#1a1208";cx.fillText(n.st===2?"×":String(n.f),x0+13,y);cx.globalAlpha=1}
+ cx.strokeStyle="#fff";cx.lineWidth=2;cx.beginPath();cx.moveTo(nx,2);cx.lineTo(nx,h-2);cx.stroke();cx.lineWidth=1;
  cx.fillStyle="#f0d9a0";cx.font="13px system-ui,sans-serif";cx.textAlign="left";
- if(pos<0&&playing)cx.fillText("Preparati…",nx+10,238);else if(!playing&&pos<=-1.9)cx.fillText("Premi Play e suona sulla linea",nx+10,238)}
+ if(pos<0&&playing)cx.fillText("Preparati…",nx+10,h-8);else if(!playing&&pos<=-1.9)cx.fillText("Premi Play e suona sulla linea",nx+10,h-8)}
 sel.onchange();requestAnimationFrame(frame);
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script></body></html>
