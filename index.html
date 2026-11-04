@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BassTrainer</title>
+<meta name="theme-color" content="#0b0b0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon-180.png">
+<style>
+:root{color-scheme:dark;--bg:#0b0b0a;--pan:#151512;--line:#2e2c24;--ink:#e8d9b2;--mut:#9a8a62;--br:#d8b673;--ok:#3ccfa8;--bad:#ff6670;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{height:100%;background:var(--bg)}
+body{margin:0;color:var(--ink);font:15px/1.45 "Avenir Next","Segoe UI",system-ui,sans-serif;background:repeating-linear-gradient(45deg,#0b0b0a 0 3px,#0e0e0c 3px 6px)}
+main{max-width:1060px;margin:0 auto;padding:16px 14px 40px}
+.plate{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 20px;border-radius:8px;color:#2a1c06;background:linear-gradient(115deg,#8c6a30,#d9bb77 35%,#b48d45 55%,#e0c481 80%,#8a6a32);box-shadow:0 2px 0 #000,inset 0 1px 0 #fff6}
+.plate h1{margin:0;font:700 30px/1 Georgia,"Rockwell",serif;text-shadow:0 1px 0 #fff6}
+.plate span{font-size:12px;letter-spacing:.2em;text-transform:uppercase}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:14px;margin:14px 0}
+@media(max-width:760px){.cols{grid-template-columns:1fr}}
+.panel{background:var(--pan);border:1px solid var(--line);border-radius:12px;padding:16px}
+h2{margin:0 0 12px;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--br)}
+.tag{float:right;font:12px ui-monospace,monospace;color:var(--br);border:1px solid #5a3a1a;padding:3px 8px;border-radius:4px}
+.board{border-radius:6px;overflow:hidden;box-shadow:inset 0 0 14px #000}
+canvas{display:block;width:100%;height:250px;background:linear-gradient(#6b3a20,#4a2615)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+button,select,input[type=number],textarea{font:inherit;color:var(--ink);background:#1b1a15;border:1px solid #5a3a1a;border-radius:6px;padding:9px 14px}
+button{cursor:pointer;letter-spacing:.08em;text-transform:uppercase;font-size:13px}
+button.main{background:var(--br);color:#1a1208;border-color:var(--br);font-weight:700}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--br);outline-offset:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px 20px}
+label{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+label b{color:var(--br)}
+input[type=range]{width:100%;accent-color:var(--br)}
+.cab{text-align:center}
+.spk{aspect-ratio:1;border-radius:8px;display:grid;place-items:center;border:2px solid #3a382e;background:repeating-linear-gradient(0deg,#0d0d0b 0 2px,#151512 2px 4px)}
+.spk div{width:68%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#050505 0 22%,#1b1b18 23% 40%,#0c0c0a 41% 60%,#222 61%);box-shadow:0 0 18px #000}
+.spk b{font:700 30px Georgia,serif;color:var(--br)}
+#hz{margin:8px 0 0;font:12px ui-monospace,monospace;color:var(--mut);min-height:1.4em}
+textarea{width:100%;min-height:64px;font:13px ui-monospace,monospace}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:12px}
+#res{display:none;margin-top:14px}#res strong{font:700 36px Georgia,serif;color:var(--br)}
+small{color:var(--mut)}
+</style></head><body><main>
+<header class="plate"><h1>BassTrainer</h1><span>Amplificatore · Studio del basso</span></header>
+<div class="cols">
+<section class="panel"><h2>Tastiera del basso <span class="tag" id="live">Microfono spento</span></h2>
+<div class="board"><canvas id="cv" aria-label="Tab per basso a quattro corde"></canvas></div>
+<div class="bar"><button id="play" class="main">Play</button><button id="rst">Dall’inizio</button><button id="mic">Attiva microfono</button></div>
+<div class="grid">
+<label>Posizione <b id="vp"></b><input id="pos" type="range" min="-2" max="20" step="0.05" value="-2"></label>
+<label>Velocità <b id="vs">100%</b><input id="spd" type="range" min="0.4" max="1.25" step="0.05" value="1"></label>
+<label>Ritardo microfono <b id="vl">120 ms</b><input id="lat" type="range" min="0" max="400" step="10" value="120"></label>
+<label>Base / mp3 <b id="vb">60%</b><input id="bas" type="range" min="0" max="100" step="5" value="60"></label>
+<label><input id="oct" type="checkbox" checked> Accetta anche l’ottava</label>
+</div><small>Usa le cuffie per la base, così il microfono sente solo il tuo basso.</small></section>
+<section class="panel cab"><h2>Cabinet · 1×15</h2><div class="spk"><div><b id="note">—</b></div></div><p id="hz"></p></section>
+</div>
+<section class="panel"><h2>Brano</h2>
+<div class="row"><label>Brano<br><select id="song"></select></label>
+<label>Tempo (BPM)<br><input id="bpm" type="number" min="40" max="240" style="width:90px"></label>
+<label>Il tuo mp3<br><input id="mp3" type="file" accept="audio/*"></label>
+<label>Inizio brano nell’mp3 (s)<br><input id="off" type="number" step="0.1" value="0" style="width:90px"></label></div>
+<label>Oppure scrivi la tua tab: corda+tasto:battiti, separati da spazio (pausa = -:1)
+<textarea id="tab" placeholder="E3:1 E3:1 A0:2 D2:1 -:1 G0:1"></textarea></label>
+<div class="bar"><button id="use">Usa questa tab</button></div>
+<small>L’mp3 resta sul tuo dispositivo e non viene caricato da nessuna parte.</small></section>
+<div id="res" class="panel" aria-live="polite"></div>
+</main>
+<script>
+const OPEN=[43,38,33,28],LBL=["G","D","A","E"],NM=["Do","Do#","Re","Re#","Mi","Fa","Fa#","Sol","Sol#","La","La#","Si"];
+const SONGS={
+ode:{n:"Inno alla gioia (pubblico dominio)",bpm:84,ch:["C","G","C","G"],a:[[40,1],[40,1],[41,1],[43,1],[43,1],[41,1],[40,1],[38,1],[36,1],[36,1],[38,1],[40,1],[40,1.5],[38,.5],[38,2]]},
+fra:{n:"Fra Martino (tradizionale)",bpm:96,ch:["C","C","C","C","G","G","C","C"],a:[[36,1],[38,1],[40,1],[36,1],[36,1],[38,1],[40,1],[36,1],[40,1],[41,1],[43,2],[40,1],[41,1],[43,2],[43,.5],[45,.5],[43,.5],[41,.5],[40,1],[36,1],[43,.5],[45,.5],[43,.5],[41,.5],[40,1],[36,1],[36,1],[31,1],[36,2],[36,1],[31,1],[36,2]]},
+scala:{n:"Scala di Do, esercizio",bpm:72,ch:["C","C","C","C","C"],a:[[36,1],[38,1],[40,1],[41,1],[43,1],[45,1],[47,1],[48,2],[47,1],[45,1],[43,1],[41,1],[40,1],[38,1],[36,2]]}};
+const CH={C:[60,64,67],G:[55,59,62]};
+const $=id=>document.getElementById(id),cv=$("cv"),cx=cv.getContext("2d");
+let notes=[],ch=[],nb=0,bpm=80,end=0,pos=-2,playing=false,last=0,ana=null,buf=null,sr=48000,prev=0,tol=.3,AC=null,mast=null,nz=null,hasMp3=false;
+const au=new Audio();au.preservesPitch=true;
+const sel=$("song");for(const k in SONGS){const o=document.createElement("option");o.value=k;o.textContent=SONGS[k].n;sel.append(o)}
+function setNotes(list,b,c){let t=0;notes=list.map(([m,d,s])=>{if(s===undefined){s=0;for(let i=0;i<4;i++)if(OPEN[i]<=m){s=i;break}}const n={m,s,f:m-OPEN[s],t,d,st:0};t+=d;return n});end=t;bpm=b;ch=c||[];$("bpm").value=b;$("pos").max=end;playing=false;au.pause();$("play").textContent="Play";$("res").style.display="none";seek(-2)}
+sel.onchange=()=>{const S=SONGS[sel.value];setNotes(S.a,S.bpm,S.ch)};
+$("use").onclick=()=>{const L=[];for(const w of $("tab").value.trim().split(/\s+/)){let r=w.match(/^([EADG])(\d+):([\d.]+)$/i);if(r){const s=LBL.indexOf(r[1].toUpperCase());L.push([OPEN[s]+ +r[2],+r[3],s]);continue}r=w.match(/^-:([\d.]+)$/);if(r){L.push([-99,+r[1],0]);continue}if(w){$("live").textContent="Non capisco: "+w;return}}
+ if(!L.length)return;setNotes(L,+$("bpm").value||80,[]);notes.forEach(n=>{if(n.m<0)n.st=3});$("live").textContent="Tab caricata"};
+$("bpm").oninput=e=>{bpm=+e.target.value||bpm};
+$("mp3").onchange=e=>{const f=e.target.files[0];if(!f)return;au.src=URL.createObjectURL(f);hasMp3=true;$("live").textContent="mp3: "+f.name.slice(0,24)};
+$("play").onclick=()=>{initAudio();if(pos>=end)seek(-2);playing=!playing;if(playing)nb=Math.ceil(pos);else au.pause();$("play").textContent=playing?"Pausa":"Play";$("res").style.display="none"};
+$("rst").onclick=()=>seek(-2);
+function seek(p){pos=p;nb=Math.ceil(p);for(const n of notes)if(n.t>=p-.5&&n.m>=0)n.st=0;$("pos").value=p;if(hasMp3)au.currentTime=Math.max(0,p*60/bpm+ +$("off").value)}
+$("pos").oninput=e=>{seek(+e.target.value);$("res").style.display="none"};
+$("spd").oninput=e=>$("vs").textContent=Math.round(e.target.value*100)+"%";
+$("lat").oninput=e=>$("vl").textContent=e.target.value+" ms";
+$("bas").oninput=e=>$("vb").textContent=e.target.value+"%";
+function initAudio(){if(AC){AC.resume();return}AC=new (window.AudioContext||window.webkitAudioContext)();mast=AC.createGain();mast.connect(AC.destination);
+ const l=AC.sampleRate;nz=AC.createBuffer(1,l/2,l);const d=nz.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;setInterval(sched,25)}
+function tone(f,t,len,type,vol){const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.03);g.gain.exponentialRampToValueAtTime(.0001,t+len);o.connect(g);g.connect(mast);o.start(t);o.stop(t+len+.05)}
+function kick(t){const o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(110,t);o.frequency.exponentialRampToValueAtTime(60,t+.1);g.gain.setValueAtTime(.8,t);g.gain.exponentialRampToValueAtTime(.001,t+.15);o.connect(g);g.connect(mast);o.start(t);o.stop(t+.2)}
+function hit(t,hp,len,vol){const s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=nz;f.type="highpass";f.frequency.value=hp;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+len);s.connect(f);f.connect(g);g.connect(mast);s.start(t);s.stop(t+len)}
+function sched(){if(!AC||!playing)return;const bs=bpm*+$("spd").value/60;mast.gain.value=$("bas").value/100*.5;
+ for(;nb<=pos+.15*bs;nb++){if(nb>=end)break;const t=AC.currentTime+Math.max(0,(nb-pos)/bs),b=((nb%4)+4)%4;
+  if(nb<0){tone(1200,t,.06,"square",.12);continue}
+  if(hasMp3)continue;
+  if(b===0||b===2)kick(t);else hit(t,1500,.12,.45);
+  hit(t,7000,.04,.22);hit(t+.5/bs,7000,.04,.14);
+  if(b===0&&nb/4<ch.length)for(const n of CH[ch[nb/4]])tone(440*2**((n-69)/12),t,3.6/bs,"triangle",.14)}}
+$("mic").onclick=async()=>{
+ try{const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+ const ac=new (window.AudioContext||window.webkitAudioContext)();sr=ac.sampleRate;const src=ac.createMediaStreamSource(st);ana=ac.createAnalyser();ana.fftSize=4096;buf=new Float32Array(4096);src.connect(ana);
+ $("mic").textContent="Microfono attivo";$("mic").disabled=true;$("live").textContent="Suona una corda a vuoto";setInterval(listen,40)}
+ catch(e){$("live").textContent="Microfono non disponibile: controlla i permessi (serve https)"}};
+function yin(b){const W=2048,M=Math.min(1500,b.length-W);let r=0;for(let i=0;i<W;i++)r+=b[i]*b[i];if(r/W<2e-5)return 0;
+ const d=new Float32Array(M);for(let t=1;t<M;t++){let s=0;for(let j=0;j<W;j++){const x=b[j]-b[j+t];s+=x*x}d[t]=s}
+ let run=0;d[0]=1;for(let t=1;t<M;t++){run+=d[t];d[t]=d[t]*t/run}
+ for(let t=Math.floor(sr/400);t<M-1;t++)if(d[t]<.15){while(t+1<M-1&&d[t+1]<d[t])t++;const a=d[t-1],c=d[t+1],q=a-2*d[t]+c;return sr/(t+(q?(a-c)/(2*q):0))}return 0}
+function listen(){ana.getFloatTimeDomainData(buf);const f=yin(buf);if(!f){prev=0;return}
+ const m=Math.round(69+12*Math.log2(f/440));if(m<24||m>62){prev=0;return}
+ $("note").textContent=NM[m%12];$("hz").textContent=f.toFixed(0)+" Hz";
+ const stable=m===prev;prev=m;if(!stable||!playing)return;
+ const sp=+$("spd").value,p=pos-($("lat").value/1000)*bpm*sp/60,tb=tol*bpm*sp/60;
+ for(const n of notes)if(n.st===0&&Math.abs(p-n.t)<=tb&&(m===n.m||($("oct").checked&&(m-n.m)%12===0)))n.st=1}
+function finish(){playing=false;au.pause();$("play").textContent="Play";const T=notes.filter(n=>n.m>=0),ok=T.filter(n=>n.st===1).length;
+ const R=$("res");R.style.display="block";R.innerHTML="<strong>"+Math.round(ok/T.length*100)+"%</strong> · "+ok+" note su "+T.length+(ana?"":"<br>Il microfono era spento: attivalo per il punteggio vero.")}
+function frame(ts){const dt=Math.min(.1,(ts-last)/1000||0);last=ts;const sp=+$("spd").value;
+ if(playing){pos+=dt*bpm*sp/60;const tb=tol*bpm*sp/60,lb=($("lat").value/1000)*bpm*sp/60;
+  for(const n of notes)if(n.st===0&&pos-lb>n.t+tb)n.st=ana?2:3;
+  $("pos").value=pos;if(pos>end+.5)finish();
+  if(hasMp3){au.playbackRate=sp;au.volume=$("bas").value/100;const s=pos*60/bpm+ +$("off").value;if(pos<0)au.pause();else{if(Math.abs(au.currentTime-s)>.25)au.currentTime=s;if(au.paused)au.play().catch(()=>{})}}}
+ $("vp").textContent=Math.max(0,Math.floor(pos))+" / "+Math.round(end);draw();requestAnimationFrame(frame)}
+function draw(){const dpr=devicePixelRatio||1,w=cv.clientWidth,h=250;if(cv.width!==Math.round(w*dpr)){cv.width=Math.round(w*dpr);cv.height=h*dpr}
+ cx.setTransform(dpr,0,0,dpr,0,0);cx.clearRect(0,0,w,h);const nx=w*.2,ppb=Math.max(70,Math.min(110,w/9)),ys=[40,95,150,205];
+ cx.font="700 15px system-ui,sans-serif";cx.textBaseline="middle";cx.textAlign="center";
+ for(let b=Math.ceil(pos-nx/ppb);b<pos+(w-nx)/ppb;b++){const x=nx+(b-pos)*ppb;cx.strokeStyle="#d8b67355";cx.beginPath();cx.moveTo(x,18);cx.lineTo(x,230);cx.stroke()}
+ ys.forEach((y,i)=>{cx.strokeStyle="#e4dcc0";cx.lineWidth=1.2+i*.7;cx.beginPath();cx.moveTo(34,y);cx.lineTo(w,y);cx.stroke();cx.fillStyle="#f0d9a0";cx.fillText(LBL[i],16,y)});cx.lineWidth=1;
+ for(const n of notes){if(n.m<0)continue;const x=nx+(n.t-pos)*ppb,wd=Math.max(30,n.d*ppb-6),x0=Math.max(x,36);if(x+wd<34||x>w)continue;const y=ys[n.s];
+  cx.globalAlpha=n.st===3||(n.st===0&&x<nx-60)?.45:1;cx.fillStyle=n.st===1?"#3ccfa8":n.st===2?"#ff6670":"#e8b94c";
+  cx.beginPath();cx.roundRect(x0,y-15,wd-(x0-x),30,15);cx.fill();cx.fillStyle="#1a1208";cx.fillText(n.st===2?"×":String(n.f),x0+15,y);cx.globalAlpha=1}
+ cx.strokeStyle="#fff";cx.lineWidth=2;cx.beginPath();cx.moveTo(nx,10);cx.lineTo(nx,240);cx.stroke();cx.lineWidth=1;
+ cx.fillStyle="#f0d9a0";cx.font="13px system-ui,sans-serif";cx.textAlign="left";
+ if(pos<0&&playing)cx.fillText("Preparati…",nx+10,238);else if(!playing&&pos<=-1.9)cx.fillText("Premi Play e suona sulla linea",nx+10,238)}
+sel.onchange();requestAnimationFrame(frame);
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script></body></html>
