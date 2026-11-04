@@ -9,78 +9,78 @@
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="apple-touch-icon" href="icon-180.png">
 <style>
-:root{color-scheme:dark;--bg:#0b0b0a;--pan:#151512;--line:#2e2c24;--ink:#e8d9b2;--mut:#9a8a62;--br:#d8b673}
+:root{color-scheme:dark;--g:#e8c872;--gd:#1a1206}
 *{box-sizing:border-box}html,body{height:100%;margin:0;overscroll-behavior:none}
-body{color:var(--ink);font:13px/1.3 "Avenir Next","Segoe UI",system-ui,sans-serif;background:repeating-linear-gradient(45deg,#0b0b0a 0 3px,#0e0e0c 3px 6px)}
-main{height:100dvh;display:flex;flex-direction:column;gap:8px;padding:max(8px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
-.plate{flex:none;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 18px;border-radius:8px;color:#2a1c06;background:linear-gradient(115deg,#8c6a30,#d9bb77 35%,#b48d45 55%,#e0c481 80%,#8a6a32);box-shadow:0 2px 0 #000,inset 0 1px 0 #fff6}
-.plate h1{margin:0;font:700 24px/1 Georgia,"Rockwell",serif;text-shadow:0 1px 0 #fff6}
-.plate span{font-size:11px;letter-spacing:.2em;text-transform:uppercase}
-.cols{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:8px}
-.panel{background:var(--pan);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;min-height:0}
-h2{margin:0;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--br)}
-.board{position:relative;flex:1;min-height:0;border-radius:6px;overflow:hidden;box-shadow:inset 0 0 14px #000;background:linear-gradient(#6b3a20,#4a2615)}
+body{background:#050505;color:var(--g);font:13px/1.3 "Avenir Next","Segoe UI",system-ui,sans-serif;padding:max(6px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}
+.amp{position:relative;height:100%;display:flex;flex-direction:column;gap:8px;padding:10px;border-radius:10px;background:#121212 repeating-linear-gradient(45deg,#181818 0 1px,#0f0f0f 1px 3px);box-shadow:0 0 0 2px #000,inset 0 0 20px #000}
+.c{position:absolute;width:15px;height:15px;border-radius:3px;background:radial-gradient(circle,#c9a24f 0 2px,#050505 3px)}
+.c:nth-of-type(1){top:2px;left:2px}.c:nth-of-type(2){top:2px;right:2px}.c:nth-of-type(3){bottom:2px;left:2px}.c:nth-of-type(4){bottom:2px;right:2px}
+.front{flex:none;padding:8px 14px;border:2px solid #0a0a0a;border-radius:3px;color:var(--gd);background:repeating-linear-gradient(90deg,#fff1 0 1px,#0000 1px 3px),linear-gradient(180deg,#e0bf68,#b78d33 55%,#cba548);box-shadow:inset 0 1px 0 #fff7,0 2px 6px #000;display:flex;flex-direction:column;gap:6px}
+.r1,.r2{display:flex;align-items:center;gap:8px;min-width:0}
+h1{margin:0;font:700 26px/1 Georgia,"Rockwell",serif;text-shadow:0 1px 0 #fff7;white-space:nowrap}
+.sub{font-size:11px;letter-spacing:.22em;text-transform:uppercase;white-space:nowrap}
+.r1 select{margin-left:auto}
+button,select{font:inherit;color:var(--g);background:#121212;border:1px solid #000;border-radius:5px;padding:7px 12px;box-shadow:inset 0 1px 0 #fff2,0 1px 2px #0008}
+button{cursor:pointer;letter-spacing:.07em;text-transform:uppercase;font-size:12px;white-space:nowrap}
+button.pw{background:linear-gradient(#e0382f,#9c1612);color:#fff;font-weight:700;min-width:70px}
+button:focus-visible,select:focus-visible,.k:focus-visible,input:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.tag,.lcd{font:11px ui-monospace,monospace;color:var(--g);background:#0b0b0b;border:1px solid #000;border-radius:4px;padding:5px 8px;box-shadow:inset 0 0 6px #000}
+.tag{max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lcd{display:flex;align-items:baseline;gap:6px}.lcd b{font:700 17px Georgia,serif;min-width:2.4em;text-align:center}.lcd small{min-width:4.2em;color:#a98a3c}
+.gap{flex:1}
+.kn{display:flex;flex-direction:column;align-items:center;width:62px}
+.kn i{font-style:normal;font-size:9px;letter-spacing:.1em;text-transform:uppercase;margin-top:3px;white-space:nowrap}.kn b{font:10px ui-monospace,monospace}
+.k{width:38px;height:38px;border-radius:50%;position:relative;cursor:ns-resize;touch-action:none;transform:rotate(var(--a,-135deg));background:radial-gradient(circle at 35% 30%,#f6e3a0,#b88a2c 55%,#6e4f14);box-shadow:0 3px 5px #000a,0 0 0 2px #1a1206}
+.k::after{content:"";position:absolute;top:3px;left:50%;width:3px;height:12px;margin-left:-1.5px;background:var(--gd);border-radius:2px}
+.grille{flex:1;min-height:0;display:flex;padding:10px;border:2px solid #d9d9d0;border-radius:3px;background:#0a0a0a repeating-linear-gradient(0deg,#1b1b1b 0 1px,#0000 1px 3px),repeating-linear-gradient(90deg,#171717 0 1px,#0000 1px 3px)}
+.fb{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;padding:6px;border:2px solid #8a7339;border-radius:6px;background:#0d0d0d;box-shadow:0 6px 18px #000}
+.board{position:relative;flex:1;min-height:0;border-radius:4px;overflow:hidden;box-shadow:inset 0 0 14px #000;background:linear-gradient(#6b3a20,#4a2615)}
 canvas{display:block;width:100%;height:100%}
-.row{display:flex;align-items:center;gap:8px}
-button,select{font:inherit;color:var(--ink);background:#1b1a15;border:1px solid #5a3a1a;border-radius:6px;padding:7px 12px}
-button{cursor:pointer;letter-spacing:.08em;text-transform:uppercase;font-size:12px;white-space:nowrap}
-button.main{background:var(--br);color:#1a1208;border-color:var(--br);font-weight:700}
-button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--br);outline-offset:2px}
-.tag{font:11px ui-monospace,monospace;color:var(--br);border:1px solid #5a3a1a;padding:4px 8px;border-radius:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;text-align:right}
-label{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);flex:1;min-width:0}
-label b{color:var(--br)}label input[type=range]{width:100%;margin:2px 0 0;accent-color:var(--br)}
-.cab{text-align:center}
-.spk{flex:1;min-height:0;display:grid;place-items:center;border-radius:8px;border:2px solid #3a382e;background:repeating-linear-gradient(0deg,#0d0d0b 0 2px,#151512 2px 4px)}
-.spk div{height:88%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#050505 0 22%,#1b1b18 23% 40%,#0c0c0a 41% 60%,#222 61%);box-shadow:0 0 18px #000}
-.spk b{font:700 24px Georgia,serif;color:var(--br)}
-#hz{margin:0;font:11px ui-monospace,monospace;color:var(--mut);min-height:1.2em}
-.cab select{width:100%}.cab button{width:100%}
-#res{display:none;position:absolute;inset:0;margin:auto;width:max-content;height:max-content;padding:12px 22px;border-radius:10px;background:#151512ee;border:1px solid var(--br);text-align:center}
-#res strong{font:700 34px Georgia,serif;color:var(--br)}
-#rot{display:none;position:fixed;inset:0;z-index:9;align-items:center;justify-content:center;background:var(--bg);font:700 20px Georgia,serif;color:var(--br);text-align:center;padding:30px}
+.ps{display:flex;align-items:center;gap:10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+.ps b{color:#fff;font-weight:600;min-width:5em}.ps input{flex:1;height:14px;accent-color:var(--g)}
+#res{display:none;position:absolute;inset:0;margin:auto;width:max-content;height:max-content;padding:12px 22px;border-radius:10px;background:#121212ee;border:1px solid var(--g);text-align:center}
+#res strong{font:700 34px Georgia,serif}
+#rot{display:none;position:fixed;inset:0;z-index:9;align-items:center;justify-content:center;background:#050505;font:700 20px Georgia,serif;text-align:center;padding:30px}
 @media (orientation:portrait){#rot{display:flex}}
-@media (max-height:430px){.plate{padding:5px 14px}.plate h1{font-size:19px}.panel{padding:8px 10px;gap:6px}.cab h2,.row .hide{display:none}button,select{padding:5px 9px}}
-</style></head><body><main>
-<header class="plate"><h1>BassTrainer</h1><span>Amplificatore · Studio del basso</span></header>
-<div class="cols">
-<section class="panel"><div class="board"><canvas id="cv" aria-label="Tab per basso a quattro corde"></canvas><div id="res" aria-live="polite"></div></div>
-<div class="row"><button id="play" class="main">Play</button><button id="rst" aria-label="Dall’inizio">⟲</button><button id="mic">Microfono</button><span id="live" class="tag">Microfono spento</span></div>
-<div class="row"><label>Posizione <b id="vp"></b><input id="pos" type="range" min="-2" max="20" step="0.05" value="-2"></label>
-<label>Velocità <b id="vs">100%</b><input id="spd" type="range" min="0.4" max="1.25" step="0.05" value="1"></label>
-<label>Ritardo mic <b id="vl">120 ms</b><input id="lat" type="range" min="0" max="400" step="10" value="120"></label>
-<label>Base / mp3 <b id="vb">60%</b><input id="bas" type="range" min="0" max="100" step="5" value="60"></label>
-<label style="flex:0 0 auto"><input id="oct" type="checkbox" checked> Ottava ok</label></div></section>
-<section class="panel cab"><h2>Cabinet · 1×15</h2><div class="spk"><div><b id="note">—</b></div></div><p id="hz"></p>
-<select id="song" aria-label="Brano"></select><button id="mp3b">Carica mp3</button><input id="mp3" type="file" accept="audio/*" hidden></section>
-</div><div id="rot">Ruota il telefono in orizzontale</div></main>
+@media (max-height:430px){h1{font-size:20px}.front{padding:5px 12px;gap:3px}.amp{padding:6px;gap:6px}.grille{padding:6px}button,select{padding:5px 9px}.k{width:32px;height:32px}.kn i{margin-top:1px}}
+</style></head><body><main class="amp"><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i>
+<div class="front"><div class="r1"><h1>BassTrainer</h1><span class="sub">Learn to play</span><select id="song" aria-label="Brano"></select><button id="mp3b">Carica mp3</button><input id="mp3" type="file" accept="audio/*" hidden><span id="live" class="tag">Microfono spento</span></div>
+<div class="r2"><button id="play" class="pw">Play</button><button id="rst">Da capo</button><button id="mic">Microfono</button><span class="lcd"><b id="note">—</b><small id="hz"></small></span><span class="gap"></span>
+<div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Velocità" data-for="spd"></div><input id="spd" type="range" min="0.4" max="1.25" step="0.05" value="1" hidden><i>Velocità</i><b id="vs">100%</b></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Ritardo" data-for="lat"></div><input id="lat" type="range" min="0" max="400" step="10" value="120" hidden><i>Ritardo</i><b id="vl">120 ms</b></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Base" data-for="bas"></div><input id="bas" type="range" min="0" max="100" step="5" value="60" hidden><i>Base</i><b id="vb">60%</b></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Basso" data-for="bgn"></div><input id="bgn" type="range" min="0" max="100" step="5" value="60" hidden><i>Basso</i><b id="vg">60%</b></div></div></div>
+<div class="grille"><div class="fb"><div class="board"><canvas id="cv" aria-label="Tab per basso a quattro corde"></canvas><div id="res" aria-live="polite"></div></div>
+<label class="ps">Posizione <b id="vp"></b><input id="pos" type="range" min="-2" max="20" step="0.05" value="-2"></label></div></div>
+<div id="rot">Ruota il telefono in orizzontale</div></main>
 <script>
 const OPEN=[43,38,33,28],LBL=["G","D","A","E"],NM=["Do","Do#","Re","Re#","Mi","Fa","Fa#","Sol","Sol#","La","La#","Si"];
 const SONGS={
-ode:{n:"Inno alla gioia (pubblico dominio)",bpm:84,ch:["C","G","C","G"],a:[[40,1],[40,1],[41,1],[43,1],[43,1],[41,1],[40,1],[38,1],[36,1],[36,1],[38,1],[40,1],[40,1.5],[38,.5],[38,2]]},
-fra:{n:"Fra Martino (tradizionale)",bpm:96,ch:["C","C","C","C","G","G","C","C"],a:[[36,1],[38,1],[40,1],[36,1],[36,1],[38,1],[40,1],[36,1],[40,1],[41,1],[43,2],[40,1],[41,1],[43,2],[43,.5],[45,.5],[43,.5],[41,.5],[40,1],[36,1],[43,.5],[45,.5],[43,.5],[41,.5],[40,1],[36,1],[36,1],[31,1],[36,2],[36,1],[31,1],[36,2]]},
-scala:{n:"Scala di Do, esercizio",bpm:72,ch:["C","C","C","C","C"],a:[[36,1],[38,1],[40,1],[41,1],[43,1],[45,1],[47,1],[48,2],[47,1],[45,1],[43,1],[41,1],[40,1],[38,1],[36,2]]}};
+ode:{n:"Inno alla gioia",bpm:84,ch:["C","G","C","G"],a:[[40,1],[40,1],[41,1],[43,1],[43,1],[41,1],[40,1],[38,1],[36,1],[36,1],[38,1],[40,1],[40,1.5],[38,.5],[38,2]]},
+fra:{n:"Fra Martino",bpm:96,ch:["C","C","C","C","G","G","C","C"],a:[[36,1],[38,1],[40,1],[36,1],[36,1],[38,1],[40,1],[36,1],[40,1],[41,1],[43,2],[40,1],[41,1],[43,2],[43,.5],[45,.5],[43,.5],[41,.5],[40,1],[36,1],[43,.5],[45,.5],[43,.5],[41,.5],[40,1],[36,1],[36,1],[31,1],[36,2],[36,1],[31,1],[36,2]]},
+scala:{n:"Scala di Do",bpm:72,ch:["C","C","C","C","C"],a:[[36,1],[38,1],[40,1],[41,1],[43,1],[45,1],[47,1],[48,2],[47,1],[45,1],[43,1],[41,1],[40,1],[38,1],[36,2]]}};
 const CH={C:[60,64,67],G:[55,59,62]};
 const $=id=>document.getElementById(id),cv=$("cv"),cx=cv.getContext("2d");
-let notes=[],ch=[],nb=0,bpm=80,end=0,pos=-2,playing=false,last=0,ana=null,buf=null,sr=48000,prev=0,tol=.3,AC=null,mast=null,nz=null,hasMp3=false;
+let notes=[],ch=[],nb=0,bpm=80,end=0,pos=-2,playing=false,last=0,ana=null,buf=null,sr=48000,prev=0,tol=.3,AC=null,mast=null,nz=null,bg=null,nn=0,hasMp3=false;
 const au=new Audio();au.preservesPitch=true;
 const sel=$("song");for(const k in SONGS){const o=document.createElement("option");o.value=k;o.textContent=SONGS[k].n;sel.append(o)}
 function setNotes(list,b,c){let t=0;notes=list.map(([m,d,s])=>{if(s===undefined){s=0;for(let i=0;i<4;i++)if(OPEN[i]<=m){s=i;break}}const n={m,s,f:m-OPEN[s],t,d,st:0};t+=d;return n});end=t;bpm=b;ch=c||[];$("pos").max=end;playing=false;au.pause();$("play").textContent="Play";$("res").style.display="none";seek(-2)}
 sel.onchange=()=>{hasMp3=sel.value==="mp3";if(hasMp3){setNotes([],60,[]);end=au.duration||60;$("pos").max=end;return}au.pause();const S=SONGS[sel.value];setNotes(S.a,S.bpm,S.ch)};
 $("mp3b").onclick=()=>$("mp3").click();
-$("mp3").onchange=e=>{const f=e.target.files[0];if(!f)return;au.src=URL.createObjectURL(f);let o=sel.querySelector("option[value=mp3]");if(!o){o=document.createElement("option");o.value="mp3";sel.append(o)}o.textContent="♪ "+f.name.replace(/\.[^.]+$/,"");sel.value="mp3";au.onloadedmetadata=()=>{end=au.duration;$("pos").max=end};sel.onchange();$("live").textContent="Brano: "+f.name};
-$("play").onclick=()=>{initAudio();if(pos>=end)seek(-2);playing=!playing;if(playing)nb=Math.ceil(pos);else au.pause();$("play").textContent=playing?"Pausa":"Play";$("res").style.display="none"};
+$("mp3").onchange=e=>{const f=e.target.files[0];if(!f)return;au.src=URL.createObjectURL(f);let o=sel.querySelector("option[value=mp3]");if(!o){o=document.createElement("option");o.value="mp3";sel.append(o)}o.textContent="♪ "+f.name.replace(/\.[^.]+$/,"");sel.value="mp3";au.onloadedmetadata=()=>{end=au.duration;$("pos").max=end};sel.onchange()};
+$("play").onclick=()=>{initAudio();if(pos>=end)seek(-2);playing=!playing;if(playing)rs();else au.pause();$("play").textContent=playing?"Pausa":"Play";$("res").style.display="none"};
 $("rst").onclick=()=>seek(-2);
-function seek(p){pos=p;nb=Math.ceil(p);for(const n of notes)if(n.t>=p-.5&&n.m>=0)n.st=0;$("pos").value=p;if(hasMp3)au.currentTime=Math.max(0,p)}
+function rs(){nb=Math.ceil(pos);nn=notes.findIndex(n=>n.t>=pos-.001);if(nn<0)nn=notes.length}
+function seek(p){pos=p;rs();for(const n of notes)if(n.t>=p-.5&&n.m>=0)n.st=0;$("pos").value=p;if(hasMp3)au.currentTime=Math.max(0,p)}
 $("pos").oninput=e=>{seek(+e.target.value);$("res").style.display="none"};
 $("spd").oninput=e=>$("vs").textContent=Math.round(e.target.value*100)+"%";
 $("lat").oninput=e=>$("vl").textContent=e.target.value+" ms";
 $("bas").oninput=e=>$("vb").textContent=e.target.value+"%";
-function initAudio(){if(AC){AC.resume();return}AC=new (window.AudioContext||window.webkitAudioContext)();mast=AC.createGain();mast.connect(AC.destination);
+$("bgn").oninput=e=>$("vg").textContent=e.target.value+"%";
+function initAudio(){if(AC){AC.resume();return}AC=new (window.AudioContext||window.webkitAudioContext)();mast=AC.createGain();mast.connect(AC.destination);bg=AC.createGain();bg.connect(mast);
  const l=AC.sampleRate;nz=AC.createBuffer(1,l/2,l);const d=nz.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;setInterval(sched,25)}
 function tone(f,t,len,type,vol){const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.03);g.gain.exponentialRampToValueAtTime(.0001,t+len);o.connect(g);g.connect(mast);o.start(t);o.stop(t+len+.05)}
 function kick(t){const o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(110,t);o.frequency.exponentialRampToValueAtTime(60,t+.1);g.gain.setValueAtTime(.8,t);g.gain.exponentialRampToValueAtTime(.001,t+.15);o.connect(g);g.connect(mast);o.start(t);o.stop(t+.2)}
 function hit(t,hp,len,vol){const s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=nz;f.type="highpass";f.frequency.value=hp;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+len);s.connect(f);f.connect(g);g.connect(mast);s.start(t);s.stop(t+len)}
-function sched(){if(!AC||!playing)return;const bs=bpm*+$("spd").value/60;mast.gain.value=$("bas").value/100*.5;
+function sched(){if(!AC||!playing)return;const bs=bpm*+$("spd").value/60;mast.gain.value=$("bas").value/100*.5;bg.gain.value=$("bgn").value/100*2;
+ for(;nn<notes.length&&notes[nn].t<=pos+.15*bs;nn++){const n=notes[nn];if(n.m<0)continue;const t=AC.currentTime+Math.max(0,(n.t-pos)/bs),len=Math.max(.12,n.d/bs*.9),o=AC.createOscillator(),f=AC.createBiquadFilter(),g=AC.createGain();o.type="sawtooth";o.frequency.value=440*2**((n.m-69)/12);f.type="lowpass";f.frequency.value=480;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.7,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+len);o.connect(f);f.connect(g);g.connect(bg);o.start(t);o.stop(t+len+.05)}
  for(;nb<=pos+.15*bs;nb++){if(nb>=end)break;const t=AC.currentTime+Math.max(0,(nb-pos)/bs),b=((nb%4)+4)%4;
   if(nb<0){tone(1200,t,.06,"square",.12);continue}
   if(hasMp3)continue;
@@ -101,7 +101,7 @@ function listen(){ana.getFloatTimeDomainData(buf);const f=yin(buf);if(!f){prev=0
  $("note").textContent=NM[m%12];$("hz").textContent=f.toFixed(0)+" Hz";
  const stable=m===prev;prev=m;if(!stable||!playing)return;
  const sp=+$("spd").value,p=pos-($("lat").value/1000)*bpm*sp/60,tb=tol*bpm*sp/60;
- for(const n of notes)if(n.st===0&&Math.abs(p-n.t)<=tb&&(m===n.m||($("oct").checked&&(m-n.m)%12===0)))n.st=1}
+ for(const n of notes)if(n.st===0&&Math.abs(p-n.t)<=tb&&(m===n.m||((m-n.m)%12===0)))n.st=1}
 function finish(){playing=false;au.pause();$("play").textContent="Play";const T=notes.filter(n=>n.m>=0),ok=T.filter(n=>n.st===1).length;
  const R=$("res");R.style.display="block";R.innerHTML="<strong>"+(T.length?Math.round(ok/T.length*100)+"%":"Fine")+"</strong>"+(T.length?" · "+ok+" note su "+T.length:"")+(ana?"":"<br>Il microfono era spento: attivalo per il punteggio vero.")}
 function frame(ts){const dt=Math.min(.1,(ts-last)/1000||0);last=ts;const sp=+$("spd").value;
@@ -121,6 +121,13 @@ function draw(){const dpr=devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight
  cx.strokeStyle="#fff";cx.lineWidth=2;cx.beginPath();cx.moveTo(nx,2);cx.lineTo(nx,h-2);cx.stroke();cx.lineWidth=1;
  cx.fillStyle="#f0d9a0";cx.font="13px system-ui,sans-serif";cx.textAlign="left";if(hasMp3){cx.textAlign="center";cx.fillText("Suona sopra la canzone: per questo brano non c’è ancora la tab",w/2,h/2);cx.textAlign="left"}
  if(pos<0&&playing)cx.fillText("Preparati…",nx+10,h-8);else if(!playing&&pos<=-1.9)cx.fillText("Premi Play e suona sulla linea",nx+10,h-8)}
+document.querySelectorAll(".k").forEach(k=>{const r=$(k.dataset.for),mn=+r.min,mx=+r.max,st=+r.step||1;
+ const set=v=>{v=+(Math.min(mx,Math.max(mn,Math.round(v/st)*st))).toFixed(3);r.value=v;k.style.setProperty("--a",(-135+270*(v-mn)/(mx-mn))+"deg");r.dispatchEvent(new Event("input"))};
+ set(+r.value);let y0=null,v0=0;
+ k.onpointerdown=e=>{y0=e.clientY;v0=+r.value;k.setPointerCapture(e.pointerId);e.preventDefault()};
+ k.onpointermove=e=>{if(y0!==null)set(v0+(y0-e.clientY)/110*(mx-mn))};
+ k.onpointerup=k.onpointercancel=()=>{y0=null};
+ k.onkeydown=e=>{const d=/Up|Right/.test(e.key)?1:/Down|Left/.test(e.key)?-1:0;if(d){set(+r.value+d*st);e.preventDefault()}}});
 sel.onchange();requestAnimationFrame(frame);
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script></body></html>
