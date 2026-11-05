@@ -2,6 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BassTrainer</title>
+<meta name="version" content="1.0.8">
 <meta name="theme-color" content="#0b0b0a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -26,6 +27,7 @@ button:focus-visible,select:focus-visible,.k:focus-visible,input:focus-visible{o
 .tag{max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lcd{display:flex;align-items:baseline;gap:6px}.lcd b{font:700 17px Georgia,serif;min-width:2.4em;text-align:center}.lcd small{min-width:4.2em;color:#a98a3c}
 .gap{flex:1}
+.ver{font:10px ui-monospace,monospace;opacity:.7;white-space:nowrap}
 .kn{display:flex;flex-direction:column;align-items:center;width:62px}
 .kn i{font-style:normal;font-size:9px;letter-spacing:.1em;text-transform:uppercase;margin-top:3px;white-space:nowrap}.kn b{font:10px ui-monospace,monospace}
 .k{width:38px;height:38px;border-radius:50%;position:relative;cursor:ns-resize;touch-action:none;transform:rotate(var(--a,-135deg));background:radial-gradient(circle at 35% 30%,#f6e3a0,#b88a2c 55%,#6e4f14);box-shadow:0 3px 5px #000a,0 0 0 2px #1a1206}
@@ -50,9 +52,9 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .lcd[hidden]{display:none}.lcd i{font-style:normal;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#a98a3c}
 .kn{width:auto;min-width:86px}.kn .l{display:flex;gap:5px;margin-top:3px;align-items:baseline;white-space:nowrap}.kn i{margin:0}
 </style></head><body><main class="amp">
-<div class="front"><div class="r1"><h1>BassTrainer</h1><span class="sub">Learn to play</span><span class="gap"></span><select id="song" aria-label="Song"></select><button id="mp3b">Load MP3</button><input id="mp3" type="file" accept="audio/*" hidden><button id="tabb">Load tab</button><input id="tabf" type="file" accept=".musicxml,.xml,.txt,text/plain,text/xml" hidden></div>
+<div class="front"><div class="r1"><h1>BassTrainer</h1><span class="sub">Learn to play</span><span class="ver">v1.0.8</span><span class="gap"></span><select id="song" aria-label="Song"></select><button id="mp3b">Load MP3</button><input id="mp3" type="file" accept="audio/*" hidden><button id="tabb">Load tab</button><input id="tabf" type="file" accept=".musicxml,.xml,.txt,text/plain,text/xml" hidden></div>
 <div class="r2"><button id="play" class="pw">Play</button><button id="mic">Mic</button><span class="lcd" id="lcd" hidden><i>Note</i><b id="note">—</b><small id="hz"></small></span><span class="gap"></span>
-<div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Speed" data-for="spd"></div><input id="spd" type="range" min="0.4" max="1.25" step="0.05" value="1" hidden><span class="l"><i>Speed</i><b id="vs">100%</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Delay" data-for="lat"></div><input id="lat" type="range" min="0" max="400" step="10" value="120" hidden><span class="l"><i>Delay</i><b id="vl">120 ms</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Backing" data-for="bas"></div><input id="bas" type="range" min="0" max="100" step="5" value="60" hidden><span class="l"><i>Backing</i><b id="vb">60%</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Bass" data-for="bgn"></div><input id="bgn" type="range" min="0" max="100" step="5" value="60" hidden><span class="l"><i>Bass</i><b id="vg">60%</b></span></div></div></div>
+<div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Speed" data-for="spd"></div><input id="spd" type="range" min="0.4" max="1.25" step="0.05" value="1" hidden><span class="l"><i>Speed</i><b id="vs">100%</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Delay" data-for="lat"></div><input id="lat" type="range" min="0" max="400" step="10" value="120" hidden><span class="l"><i>Delay</i><b id="vl">120 ms</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Backing" title="With an MP3: volume of everything above the bass" data-for="bas"></div><input id="bas" type="range" min="0" max="100" step="5" value="60" hidden><span class="l"><i>Backing</i><b id="vb">60%</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Bass" title="With an MP3: volume of the low frequencies (bass and kick drum)" data-for="bgn"></div><input id="bgn" type="range" min="0" max="100" step="5" value="60" hidden><span class="l"><i>Bass</i><b id="vg">60%</b></span></div></div></div>
 <div class="grille"><div class="fb"><div class="board"><canvas id="cv" aria-label="Bass tab, four strings"></canvas><div id="res" aria-live="polite"></div></div>
 <label class="ps">Position <b id="vp"></b><input id="pos" type="range" min="-2" max="20" step="0.05" value="-2"></label></div></div>
 <div id="rot">Rotate your phone to landscape</div></main>
@@ -64,7 +66,7 @@ fra:{n:"Frère Jacques",bpm:96,ch:["C","C","C","C","G","G","C","C"],a:[[36,1],[3
 scala:{n:"C Major Scale",bpm:72,ch:["C","C","C","C","C"],a:[[36,1],[38,1],[40,1],[41,1],[43,1],[45,1],[47,1],[48,2],[47,1],[45,1],[43,1],[41,1],[40,1],[38,1],[36,2]]}};
 const CH={C:[60,64,67],G:[55,59,62]};
 const $=id=>document.getElementById(id),cv=$("cv"),cx=cv.getContext("2d");
-let notes=[],ch=[],nb=0,bpm=80,end=0,pos=-2,playing=false,last=0,ana=null,buf=null,sr=48000,prev=0,tol=.3,AC=null,mast=null,nz=null,bg=null,nn=0,hasMp3=false;
+let notes=[],ch=[],nb=0,bpm=80,end=0,pos=-2,playing=false,last=0,ana=null,buf=null,sr=48000,prev=0,tol=.3,AC=null,mast=null,nz=null,bg=null,mG=null,nn=0,hasMp3=false;
 const au=new Audio();au.preservesPitch=true;
 const sel=$("song");for(const k in SONGS){const o=document.createElement("option");o.value=k;o.textContent=SONGS[k].n;sel.append(o)}
 function setNotes(list,b,c){let t=0;notes=list.map(([m,d,s])=>{if(s===undefined){s=0;for(let i=0;i<4;i++)if(OPEN[i]<=m){s=i;break}}const n={m,s,f:m-OPEN[s],t,d,st:0};t+=d;return n});end=t;bpm=b;ch=c||[];$("pos").max=end;playing=false;au.pause();$("play").textContent="Play";$("res").style.display="none";seek(-2)}
@@ -80,6 +82,8 @@ $("lat").oninput=e=>$("vl").textContent=e.target.value+" ms";
 $("bas").oninput=e=>$("vb").textContent=e.target.value+"%";
 $("bgn").oninput=e=>$("vg").textContent=e.target.value+"%";
 function initAudio(){if(AC){AC.resume();return}AC=new (window.AudioContext||window.webkitAudioContext)();mast=AC.createGain();mast.connect(AC.destination);bg=AC.createGain();bg.connect(mast);
+ {const src=AC.createMediaElementSource(au),mk=t=>{const a=AC.createBiquadFilter(),b=AC.createBiquadFilter();a.type=b.type=t;a.frequency.value=b.frequency.value=250;a.Q.value=b.Q.value=.707;a.connect(b);return [a,b]},lo=mk("lowpass"),hi=mk("highpass");
+  mG={lo:AC.createGain(),hi:AC.createGain()};src.connect(lo[0]);src.connect(hi[0]);lo[1].connect(mG.lo);hi[1].connect(mG.hi);mG.lo.connect(AC.destination);mG.hi.connect(AC.destination)}
  const l=AC.sampleRate;nz=AC.createBuffer(1,l/2,l);const d=nz.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;setInterval(sched,25)}
 function tone(f,t,len,type,vol){const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.03);g.gain.exponentialRampToValueAtTime(.0001,t+len);o.connect(g);g.connect(mast);o.start(t);o.stop(t+len+.05)}
 function kick(t){const o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(110,t);o.frequency.exponentialRampToValueAtTime(60,t+.1);g.gain.setValueAtTime(.8,t);g.gain.exponentialRampToValueAtTime(.001,t+.15);o.connect(g);g.connect(mast);o.start(t);o.stop(t+.2)}
@@ -116,14 +120,14 @@ function frame(ts){const dt=Math.min(.1,(ts-last)/1000||0);last=ts;const sp=+$("
  if(playing){pos+=dt*bpm*sp/60;const tb=tol*bpm*sp/60,lb=($("lat").value/1000)*bpm*sp/60;
   for(const n of notes)if(n.st===0&&pos-lb>n.t+tb)n.st=ana?2:3;
   $("pos").value=pos;if(pos>end+.5)finish();
-  if(hasMp3){au.playbackRate=sp;au.volume=$("bas").value/100;const s=pos;if(pos<0)au.pause();else{if(Math.abs(au.currentTime-s)>.25)au.currentTime=s;if(au.paused)au.play().catch(()=>{})}}}
+  if(hasMp3){au.playbackRate=sp;au.volume=1;if(mG){mG.lo.gain.value=$("bgn").value/100;mG.hi.gain.value=$("bas").value/100}const s=pos;if(pos<0)au.pause();else{if(Math.abs(au.currentTime-s)>.25)au.currentTime=s;if(au.paused)au.play().catch(()=>{})}}}
  $("vp").textContent=Math.max(0,Math.floor(pos))+" / "+Math.round(end);draw();requestAnimationFrame(frame)}
 function draw(){const dpr=devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr)}
- cx.setTransform(dpr,0,0,dpr,0,0);cx.clearRect(0,0,w,h);const nx=w*.2,ppb=Math.max(70,Math.min(110,w/9)),ys=[.17,.39,.61,.83].map(v=>v*h);
+ cx.setTransform(dpr,0,0,dpr,0,0);cx.clearRect(0,0,w,h);const nx=w*.2,ppb=hasMp3?Math.max(140,w/6):Math.max(70,Math.min(110,w/9)),ys=[.17,.39,.61,.83].map(v=>v*h);
  cx.font="700 14px system-ui,sans-serif";cx.textBaseline="middle";cx.textAlign="center";
  for(let b=Math.ceil(pos-nx/ppb);b<pos+(w-nx)/ppb;b++){const x=nx+(b-pos)*ppb;cx.strokeStyle="#d8b67355";cx.beginPath();cx.moveTo(x,4);cx.lineTo(x,h-4);cx.stroke()}
  ys.forEach((y,i)=>{cx.strokeStyle="#e4dcc0";cx.lineWidth=1.2+i*.7;cx.beginPath();cx.moveTo(34,y);cx.lineTo(w,y);cx.stroke();cx.fillStyle="#f0d9a0";cx.fillText(LBL[i],16,y)});cx.lineWidth=1;
- for(const n of notes){if(n.m<0)continue;const x=nx+(n.t-pos)*ppb,wd=Math.max(28,n.d*ppb-6),x0=Math.max(x,36);if(x+wd<34||x>w)continue;const y=ys[n.s];
+ for(const n of notes){if(n.m<0)continue;const x=nx+(n.t-pos)*ppb,wd=Math.max(hasMp3?16:28,n.d*ppb-6),x0=Math.max(x,36);if(x+wd<34||x>w)continue;const y=ys[n.s];
   cx.globalAlpha=n.st===3||(n.st===0&&x<nx-60)?.45:1;cx.fillStyle=n.st===1?"#3ccfa8":n.st===2?"#ff6670":"#e8b94c";
   cx.beginPath();cx.roundRect(x0,y-13,wd-(x0-x),26,13);cx.fill();cx.fillStyle="#1a1208";cx.fillText(n.st===2?"×":String(n.f),x0+13,y);cx.globalAlpha=1}
  cx.strokeStyle="#fff";cx.lineWidth=2;cx.beginPath();cx.moveTo(nx,2);cx.lineTo(nx,h-2);cx.stroke();cx.lineWidth=1;
@@ -135,13 +139,13 @@ async function bassNotes(c0,c1,sr0,tick){
  for(let i=0;i<n*k;i++){y1+=a*((c0[i]+c1[i])/2-y1);y2+=a*(y1-y2);if(i%k===0)x[i/k]=y2}
  const W=384,H=Math.round(sr1*.012),T0=Math.floor(sr1/330),T1=Math.min(Math.floor(sr1/34),W-1),F=Math.floor((n-W-T1)/H),m=new Int16Array(F),e=new Float32Array(F),d=new Float32Array(T1+1);let mx=0;
  for(let f=0;f<F;f++){let s=0;const o=f*H;for(let j=0;j<W;j++)s+=x[o+j]*x[o+j];e[f]=Math.sqrt(s/W);if(e[f]>mx)mx=e[f]}
- for(let f=0;f<F;f++){if(f%250===0)await tick(f/F);if(e[f]<.08*mx)continue;const o=f*H;let run=0;
+ for(let f=0;f<F;f++){if(f%250===0)await tick(f/F);if(e[f]<.12*mx)continue;const o=f*H;let run=0;
   for(let t=1;t<=T1;t++){let s=0;for(let j=0;j<W;j++){const q=x[o+j]-x[o+j+t];s+=q*q}run+=s;d[t]=run?s*t/run:1}
   for(let t=T0;t<T1;t++)if(d[t]<.18){while(t+1<T1&&d[t+1]<d[t])t++;const p=d[t-1],c=d[t+1],q=p-2*d[t]+c;m[f]=Math.round(69+12*Math.log2(sr1/(t+(q?(p-c)/(2*q):0))/440));break}}
- const s=m.slice();for(let i=1;i<F-1;i++)if(m[i]!==m[i-1]&&m[i-1]===m[i+1])s[i]=m[i-1];
+ const s=m.slice();for(let i=2;i<F-2;i++){let bv=m[i],bn=0;for(let a=-2;a<=2;a++){const v=m[i+a];let c=0;for(let b=-2;b<=2;b++)if(m[i+b]===v)c++;if(c>bn||(c===bn&&v===m[i])){bn=c;bv=v}}s[i]=bv}
  const L=[];let st=0,t0=0,pf=5,ps=1;
  for(let i=1;i<=F;i++){if(i<F&&s[i]===s[st]&&!(e[i]>1.4*Math.min(e[i-1],e[Math.max(0,i-2)])&&e[i]>.15*mx))continue;
-  const md=s[st];if(md>=28&&md<=55&&i-st>=4){const A=st*H/sr1,B=i*H/sr1;let bi=-1,bc=1e9;
+  const md=s[st];if(md>=28&&md<=55&&i-st>=8){const A=st*H/sr1,B=i*H/sr1;let bi=-1,bc=1e9;
    for(let j=0;j<4;j++){const fr=md-OPEN[j];if(fr<0||fr>12)continue;const c=Math.abs(fr-pf)*.6+(j===ps?0:1.5)+fr*.35;if(c<bc){bc=c;bi=j}}
    if(bi>=0){if(A>t0+.001)L.push([-99,A-t0,0]);L.push([md,B-A,bi]);t0=B;pf=md-OPEN[bi];ps=bi}}
   st=i}
