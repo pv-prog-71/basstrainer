@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>BassTrainer</title>
-<meta name="version" content="1.0.11">
+<meta name="version" content="1.0.12">
 <meta name="theme-color" content="#0b0b0a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -54,7 +54,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .lcd[hidden],button[hidden]{display:none!important}.lcd i{font-style:normal;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#a98a3c}
 .kn{width:auto;min-width:86px}.kn .l{display:flex;gap:5px;margin-top:3px;align-items:baseline;white-space:nowrap}.kn i{margin:0}
 </style></head><body><main class="amp">
-<div class="front"><div class="r1"><h1>BassTrainer</h1><span class="sub">Learn to play</span><span class="ver">v1.0.11</span><span class="gap"></span><select id="song" aria-label="Song"></select><button id="mp3b">Load MP3</button><input id="mp3" type="file" accept="audio/*" hidden><button id="tabb">Load tab</button><input id="tabf" type="file" accept=".musicxml,.xml,.txt,text/plain,text/xml" hidden></div>
+<div class="front"><div class="r1"><h1>BassTrainer</h1><span class="sub">Learn to play</span><span class="ver">v1.0.12</span><span class="gap"></span><select id="song" aria-label="Song"></select><button id="mp3b">Load MP3</button><input id="mp3" type="file" accept="audio/*" hidden><button id="tabb">Load tab</button><input id="tabf" type="file" accept=".musicxml,.xml,.txt,text/plain,text/xml" hidden></div>
 <div class="r2"><button id="play" class="pw">Play</button><button id="mic">Mic</button><span class="lcd" id="lcd" hidden><i>Note</i><b id="note">—</b><small id="hz"></small></span><span class="gap"></span>
 <div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Zoom" title="Zoom the tab: fewer notes on screen" data-for="zm"></div><input id="zm" type="range" min="0.6" max="4" step="0.1" value="1.5" hidden><span class="l"><i>Zoom</i><b id="vz">1.5×</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Speed" data-for="spd"></div><input id="spd" type="range" min="0.4" max="1.25" step="0.05" value="1" hidden><span class="l"><i>Speed</i><b id="vs">100%</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Delay" data-for="lat"></div><input id="lat" type="range" min="0" max="400" step="10" value="120" hidden><span class="l"><i>Delay</i><b id="vl">120 ms</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Backing" title="Backing (built-in songs) or everything above the bass of the MP3 (Highs)" data-for="bas"></div><input id="bas" type="range" min="0" max="100" step="5" value="60" hidden><span class="l"><i>Backing</i><b id="vb">60%</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Bass" title="Bass synth (built-in songs) or low frequencies of the MP3 (Lows)" data-for="bgn"></div><input id="bgn" type="range" min="0" max="100" step="5" value="60" hidden><span class="l"><i>Bass</i><b id="vg">60%</b></span></div></div></div>
 <div class="grille"><div class="fb"><div class="board"><canvas id="cv" aria-label="Bass tab, four strings"></canvas><div id="res" aria-live="polite"></div></div>
@@ -100,13 +100,13 @@ function sched(){if(!AC||!playing)return;const bs=bpm*+$("spd").value/60;mast.ga
   hit(t,7000,.04,.22);hit(t+.5/bs,7000,.04,.14);
   if(b===0&&nb/4<ch.length)for(const n of CH[ch[nb/4]])tone(440*2**((n-69)/12),t,3.6/bs,"triangle",.14)}}
 let ms=null,mac=null,mt=0;
-if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){$("mic").disabled=true;$("mic").title="Microphone not available (needs https)"}
+if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){$("mic").disabled=true;$("mic").title="Microphone not available (needs https)";const R=$("res");R.style.display="block";R.innerHTML="Microphone unavailable here.<br><small>"+(window.top!==window?"This is an embedded preview, so the microphone and installing don’t work. Open the app directly at its own https address.":!window.isSecureContext?"This page isn’t served over https, so the microphone and installing don’t work. Open the app from its https address (GitHub Pages), not from a local file or an http link.":"Your browser doesn’t allow microphone access.")+"</small>"}
 $("mic").onclick=async()=>{
  if(ms){ms.getTracks().forEach(t=>t.stop());mac.close();clearInterval(mt);ms=null;ana=null;$("mic").classList.remove("on");$("lcd").hidden=true;$("note").textContent="—";$("hz").textContent="";return}
  try{ms=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
  mac=new (window.AudioContext||window.webkitAudioContext)();sr=mac.sampleRate;const src=mac.createMediaStreamSource(ms);ana=mac.createAnalyser();ana.fftSize=4096;buf=new Float32Array(4096);src.connect(ana);
  $("mic").classList.add("on");$("lcd").hidden=false;mt=setInterval(listen,40)}
- catch(e){ms=null;$("mic").disabled=true;$("mic").title="Microphone blocked or unavailable"}};
+ catch(e){ms=null;const R=$("res");R.style.display="block";if(e&&e.name==="NotAllowedError")R.innerHTML="Microphone permission denied.<br><small>Allow it for this site in your browser settings, then tap Mic again.</small>";else{$("mic").disabled=true;R.innerHTML="Microphone unavailable.<br><small>"+(e&&e.name||"")+"</small>"}}};
 function yin(b){const W=2048,M=Math.min(1500,b.length-W);let r=0;for(let i=0;i<W;i++)r+=b[i]*b[i];if(r/W<2e-5)return 0;
  const d=new Float32Array(M);for(let t=1;t<M;t++){let s=0;for(let j=0;j<W;j++){const x=b[j]-b[j+t];s+=x*x}d[t]=s}
  let run=0;d[0]=1;for(let t=1;t<M;t++){run+=d[t];d[t]=d[t]*t/run}
