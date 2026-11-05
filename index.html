@@ -68,9 +68,9 @@ let notes=[],ch=[],nb=0,bpm=80,end=0,pos=-2,playing=false,last=0,ana=null,buf=nu
 const au=new Audio();au.preservesPitch=true;
 const sel=$("song");for(const k in SONGS){const o=document.createElement("option");o.value=k;o.textContent=SONGS[k].n;sel.append(o)}
 function setNotes(list,b,c){let t=0;notes=list.map(([m,d,s])=>{if(s===undefined){s=0;for(let i=0;i<4;i++)if(OPEN[i]<=m){s=i;break}}const n={m,s,f:m-OPEN[s],t,d,st:0};t+=d;return n});end=t;bpm=b;ch=c||[];$("pos").max=end;playing=false;au.pause();$("play").textContent="Play";$("res").style.display="none";seek(-2)}
-sel.onchange=()=>{hasMp3=sel.value==="mp3";if(hasMp3){setNotes([],60,[]);end=au.duration||60;$("pos").max=end;return}au.pause();const S=SONGS[sel.value];setNotes(S.a,S.bpm,S.ch)};
+sel.onchange=()=>{hasMp3=sel.value==="mp3";if(hasMp3){setNotes(MP3L,60,[]);end=au.duration||60;$("pos").max=end;return}au.pause();const S=SONGS[sel.value];setNotes(S.a,S.bpm,S.ch)};
 $("mp3b").onclick=()=>$("mp3").click();
-$("mp3").onchange=e=>{const f=e.target.files[0];if(!f)return;au.src=URL.createObjectURL(f);let o=sel.querySelector("option[value=mp3]");if(!o){o=document.createElement("option");o.value="mp3";sel.append(o)}o.textContent="♪ "+f.name.replace(/\.[^.]+$/,"");sel.value="mp3";au.onloadedmetadata=()=>{end=au.duration;$("pos").max=end};sel.onchange()};
+$("mp3").onchange=e=>{const f=e.target.files[0];if(!f)return;au.src=URL.createObjectURL(f);let o=sel.querySelector("option[value=mp3]");if(!o){o=document.createElement("option");o.value="mp3";sel.append(o)}o.textContent="♪ "+f.name.replace(/\.[^.]+$/,"");sel.value="mp3";au.onloadedmetadata=()=>{end=au.duration;$("pos").max=end};MP3L=[];sel.onchange();analyze(f)};
 $("play").onclick=()=>{initAudio();if(pos>=end)seek(-2);playing=!playing;if(playing)rs();else au.pause();$("play").textContent=playing?"Pause":"Play";$("res").style.display="none"};
 function rs(){nb=Math.ceil(pos);nn=notes.findIndex(n=>n.t>=pos-.001);if(nn<0)nn=notes.length}
 function seek(p){pos=p;rs();for(const n of notes)if(n.t>=p-.5&&n.m>=0)n.st=0;$("pos").value=p;if(hasMp3)au.currentTime=Math.max(0,p)}
@@ -85,7 +85,7 @@ function tone(f,t,len,type,vol){const o=AC.createOscillator(),g=AC.createGain();
 function kick(t){const o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(110,t);o.frequency.exponentialRampToValueAtTime(60,t+.1);g.gain.setValueAtTime(.8,t);g.gain.exponentialRampToValueAtTime(.001,t+.15);o.connect(g);g.connect(mast);o.start(t);o.stop(t+.2)}
 function hit(t,hp,len,vol){const s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=nz;f.type="highpass";f.frequency.value=hp;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+len);s.connect(f);f.connect(g);g.connect(mast);s.start(t);s.stop(t+len)}
 function sched(){if(!AC||!playing)return;const bs=bpm*+$("spd").value/60;mast.gain.value=$("bas").value/100*.5;bg.gain.value=$("bgn").value/100*2;
- for(;nn<notes.length&&notes[nn].t<=pos+.15*bs;nn++){const n=notes[nn];if(n.m<0)continue;const t=AC.currentTime+Math.max(0,(n.t-pos)/bs),len=Math.max(.12,n.d/bs*.9),o=AC.createOscillator(),f=AC.createBiquadFilter(),g=AC.createGain();o.type="sawtooth";o.frequency.value=440*2**((n.m-69)/12);f.type="lowpass";f.frequency.value=480;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.7,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+len);o.connect(f);f.connect(g);g.connect(bg);o.start(t);o.stop(t+len+.05)}
+ for(;nn<notes.length&&notes[nn].t<=pos+.15*bs;nn++){const n=notes[nn];if(n.m<0||hasMp3)continue;const t=AC.currentTime+Math.max(0,(n.t-pos)/bs),len=Math.max(.12,n.d/bs*.9),o=AC.createOscillator(),f=AC.createBiquadFilter(),g=AC.createGain();o.type="sawtooth";o.frequency.value=440*2**((n.m-69)/12);f.type="lowpass";f.frequency.value=480;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.7,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+len);o.connect(f);f.connect(g);g.connect(bg);o.start(t);o.stop(t+len+.05)}
  for(;nb<=pos+.15*bs;nb++){if(nb>=end)break;const t=AC.currentTime+Math.max(0,(nb-pos)/bs),b=((nb%4)+4)%4;
   if(nb<0){tone(1200,t,.06,"square",.12);continue}
   if(hasMp3)continue;
@@ -127,8 +127,33 @@ function draw(){const dpr=devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight
   cx.globalAlpha=n.st===3||(n.st===0&&x<nx-60)?.45:1;cx.fillStyle=n.st===1?"#3ccfa8":n.st===2?"#ff6670":"#e8b94c";
   cx.beginPath();cx.roundRect(x0,y-13,wd-(x0-x),26,13);cx.fill();cx.fillStyle="#1a1208";cx.fillText(n.st===2?"×":String(n.f),x0+13,y);cx.globalAlpha=1}
  cx.strokeStyle="#fff";cx.lineWidth=2;cx.beginPath();cx.moveTo(nx,2);cx.lineTo(nx,h-2);cx.stroke();cx.lineWidth=1;
- cx.fillStyle="#f0d9a0";cx.font="13px system-ui,sans-serif";cx.textAlign="left";if(hasMp3){cx.textAlign="center";cx.fillText("Play along: no tab for this track yet",w/2,h/2);cx.textAlign="left"}
+ cx.fillStyle="#f0d9a0";cx.font="13px system-ui,sans-serif";cx.textAlign="left";if(hasMp3&&!notes.length){cx.textAlign="center";cx.fillText("Play along: no tab for this track yet",w/2,h/2);cx.textAlign="left"}
  if(pos<0&&playing)cx.fillText("Get ready…",nx+10,h-8);else if(!playing&&pos<=-1.9)cx.fillText("Press Play and play on the line",nx+10,h-8)}
+let MP3L=[],job=0;
+async function bassNotes(c0,c1,sr0,tick){
+ const k=Math.max(1,Math.round(sr0/4000)),sr1=sr0/k,n=Math.floor(c0.length/k),x=new Float32Array(n),a=1-Math.exp(-2*Math.PI*300/sr0);let y1=0,y2=0;
+ for(let i=0;i<n*k;i++){y1+=a*((c0[i]+c1[i])/2-y1);y2+=a*(y1-y2);if(i%k===0)x[i/k]=y2}
+ const W=384,H=Math.round(sr1*.012),T0=Math.floor(sr1/330),T1=Math.min(Math.floor(sr1/34),W-1),F=Math.floor((n-W-T1)/H),m=new Int16Array(F),e=new Float32Array(F),d=new Float32Array(T1+1);let mx=0;
+ for(let f=0;f<F;f++){let s=0;const o=f*H;for(let j=0;j<W;j++)s+=x[o+j]*x[o+j];e[f]=Math.sqrt(s/W);if(e[f]>mx)mx=e[f]}
+ for(let f=0;f<F;f++){if(f%250===0)await tick(f/F);if(e[f]<.08*mx)continue;const o=f*H;let run=0;
+  for(let t=1;t<=T1;t++){let s=0;for(let j=0;j<W;j++){const q=x[o+j]-x[o+j+t];s+=q*q}run+=s;d[t]=run?s*t/run:1}
+  for(let t=T0;t<T1;t++)if(d[t]<.18){while(t+1<T1&&d[t+1]<d[t])t++;const p=d[t-1],c=d[t+1],q=p-2*d[t]+c;m[f]=Math.round(69+12*Math.log2(sr1/(t+(q?(p-c)/(2*q):0))/440));break}}
+ const s=m.slice();for(let i=1;i<F-1;i++)if(m[i]!==m[i-1]&&m[i-1]===m[i+1])s[i]=m[i-1];
+ const L=[];let st=0,t0=0,pf=5,ps=1;
+ for(let i=1;i<=F;i++){if(i<F&&s[i]===s[st]&&!(e[i]>1.4*Math.min(e[i-1],e[Math.max(0,i-2)])&&e[i]>.15*mx))continue;
+  const md=s[st];if(md>=28&&md<=55&&i-st>=4){const A=st*H/sr1,B=i*H/sr1;let bi=-1,bc=1e9;
+   for(let j=0;j<4;j++){const fr=md-OPEN[j];if(fr<0||fr>12)continue;const c=Math.abs(fr-pf)*.6+(j===ps?0:1.5)+fr*.35;if(c<bc){bc=c;bi=j}}
+   if(bi>=0){if(A>t0+.001)L.push([-99,A-t0,0]);L.push([md,B-A,bi]);t0=B;pf=md-OPEN[bi];ps=bi}}
+  st=i}
+ return L}
+async function analyze(f){const id=++job,b=$("mp3b"),R=$("res");b.disabled=true;
+ try{const ctx=new (window.AudioContext||window.webkitAudioContext)(),ab=await ctx.decodeAudioData(await f.arrayBuffer());ctx.close();
+  const L=await bassNotes(ab.getChannelData(0),ab.getChannelData(ab.numberOfChannels>1?1:0),ab.sampleRate,async p=>{if(id!==job)throw 0;b.textContent="Detecting "+Math.round(p*100)+"%";await new Promise(r=>setTimeout(r))});
+  if(id!==job)return;const q=L.filter(z=>z[0]>=0).length;
+  if(q<8){R.style.display="block";R.innerHTML="Couldn’t find a clear bass line in this track."}
+  else{MP3L=L;if(sel.value==="mp3")sel.onchange();R.style.display="block";R.innerHTML="Tab detected: "+q+" notes<br><small>Experimental — it may contain mistakes.</small>"}}
+ catch(err){if(err!==0){R.style.display="block";R.innerHTML="Couldn’t analyze this file."}}
+ if(id===job){b.disabled=false;b.textContent="Load MP3"}}
 function parseTab(x){const L=[];let bp=90;
  if(/^\s*</.test(x)){const d=new DOMParser().parseFromString(x,"application/xml"),t=d.querySelector("sound[tempo]");if(t)bp=Math.round(+t.getAttribute("tempo"))||90;let dv=1;
   for(const m of d.querySelectorAll("part:first-of-type measure")){const q=m.querySelector("divisions");if(q)dv=+q.textContent||1;
