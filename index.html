@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>BassTrainer</title>
-<meta name="version" content="1.0.14">
+<meta name="version" content="1.0.15">
 <meta name="theme-color" content="#0b0b0a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -40,6 +40,7 @@ button:focus-visible,select:focus-visible,.k:focus-visible,input:focus-visible{o
 canvas{display:block;width:100%;height:100%}
 .ps{display:flex;align-items:center;gap:10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
 .ps b{color:#fff;font-weight:600;min-width:5em}.ps input{flex:1;height:14px;accent-color:var(--g)}
+#sync{position:absolute;top:6px;right:6px;z-index:3;align-items:center;gap:5px;padding:4px 7px;border-radius:8px;background:#121212d9;border:1px solid var(--g);font-size:12px;color:#f0d9a0}#sync button{padding:3px 8px}#sync output{min-width:54px;text-align:center}#sync .g{opacity:.7}
 #res{display:none;position:absolute;inset:0;margin:auto;width:max-content;height:max-content;padding:12px 22px;border-radius:10px;background:#121212ee;border:1px solid var(--g);text-align:center}
 #res strong{font:700 34px Georgia,serif}
 #rot{display:none;position:fixed;inset:0;z-index:9;align-items:center;justify-content:center;background:#050505;font:700 20px Georgia,serif;text-align:center;padding:30px}
@@ -54,10 +55,10 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .lcd[hidden],button[hidden]{display:none!important}.lcd i{font-style:normal;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#a98a3c}
 .kn{width:auto;min-width:0}.knobs{display:flex;gap:14px;align-items:flex-start;margin-left:auto}.kn .l{display:flex;gap:5px;margin-top:3px;align-items:baseline;white-space:nowrap}.kn i{margin:0}
 </style></head><body><main class="amp">
-<div class="front"><div class="r1"><h1>BassTrainer</h1><span class="sub">Learn to play</span><span class="ver">v1.0.14</span><span class="gap"></span><select id="song" aria-label="Song"></select><button id="mp3b">Load MP3</button><input id="mp3" type="file" accept="audio/*" hidden><button id="tabb">Load tab</button><input id="tabf" type="file" accept=".musicxml,.xml,.txt,.gp4,.gp3,.gp5,.gp,text/plain,text/xml,application/octet-stream" hidden></div>
+<div class="front"><div class="r1"><h1>BassTrainer</h1><span class="sub">Learn to play</span><span class="ver">v1.0.15</span><span class="gap"></span><select id="song" aria-label="Song"></select><button id="mp3b">Load MP3</button><input id="mp3" type="file" accept="audio/*" hidden><button id="tabb">Load tab</button><input id="tabf" type="file" accept=".musicxml,.xml,.txt,.gp4,.gp3,.gp5,.gp,text/plain,text/xml,application/octet-stream" hidden></div>
 <div class="r2"><button id="play" class="pw">Play</button><button id="mic">Mic</button><span class="lcd" id="lcd" hidden><i>Note</i><b id="note">—</b><small id="hz"></small></span><span class="gap"></span>
-<div class="knobs"><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Speed" data-for="spd"></div><input id="spd" type="range" min="0.4" max="1.25" step="0.05" value="1" hidden><span class="l"><i>Speed</i><b id="vs">100%</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Delay" data-for="lat"></div><input id="lat" type="range" min="0" max="400" step="10" value="120" hidden><span class="l"><i>Delay</i><b id="vl">120 ms</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Zoom" title="Zoom the tab: fewer notes on screen" data-for="zm"></div><input id="zm" type="range" min="0.6" max="4" step="0.1" value="1.5" hidden><span class="l"><i>Zoom</i><b id="vz">1.5×</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Backing" title="Backing (built-in songs) or everything above the bass of the MP3 (Highs)" data-for="bas"></div><input id="bas" type="range" min="0" max="100" step="5" value="60" hidden><span class="l"><i>Backing</i><b id="vb">60%</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Bass" title="Bass synth (built-in songs) or low frequencies of the MP3 (Lows)" data-for="bgn"></div><input id="bgn" type="range" min="0" max="100" step="5" value="60" hidden><span class="l"><i>Bass</i><b id="vg">60%</b></span></div></div></div></div>
-<div class="grille"><div class="fb"><div class="board"><canvas id="cv" aria-label="Bass tab, four strings"></canvas><div id="res" aria-live="polite"></div></div>
+<div class="knobs"><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Speed" data-for="spd"></div><input id="spd" type="range" min="0.4" max="1.25" step="0.05" value="1" hidden><span class="l"><i>Speed</i><b id="vs">100%</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Delay" data-for="lat"></div><input id="lat" type="range" min="0" max="400" step="10" value="120" hidden><span class="l"><i>Delay</i><b id="vl">120 ms</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Zoom" title="Zoom the tab: fewer notes on screen" data-for="zm"></div><input id="zm" type="range" min="0.6" max="4" step="0.1" value="1.5" hidden><span class="l"><i>Zoom</i><b id="vz">1.5×</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Backing" title="Backing volume: the MP3 if loaded, otherwise the other instruments of the tab" data-for="bas"></div><input id="bas" type="range" min="0" max="100" step="5" value="80" hidden><span class="l"><i>Backing</i><b id="vb">60%</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Bass" title="Bass volume: the bass synthesized from the tab" data-for="bgn"></div><input id="bgn" type="range" min="0" max="100" step="5" value="70" hidden><span class="l"><i>Bass</i><b id="vg">60%</b></span></div></div></div></div>
+<div class="grille"><div class="fb"><div class="board"><canvas id="cv" aria-label="Bass tab, four strings"></canvas><div id="res" aria-live="polite"></div><div id="sync" style="display:none"><b>MP3</b><span class="g">Offset</span><button id="ofm" aria-label="Offset earlier">‹</button><output id="ofv"></output><button id="ofp" aria-label="Offset later">›</button><span class="g">Tempo</span><button id="tpm" aria-label="Slower">−</button><output id="tpv"></output><button id="tpp" aria-label="Faster">+</button><button id="mk" title="Press when you hear the first bass note of the tab">1st note = now</button><button id="rmv" title="Remove the MP3" aria-label="Remove MP3">✕</button></div></div>
 <label class="ps">Position <b id="vp"></b><input id="pos" type="range" min="-2" max="20" step="0.05" value="-2"></label></div></div>
 <div id="rot"><div>↻<br>Rotate your phone<br>to landscape</div></div></main>
 <script>
@@ -70,32 +71,42 @@ const CH={C:[60,64,67],G:[55,59,62]};
 const $=id=>document.getElementById(id),cv=$("cv"),cx=cv.getContext("2d");
 let notes=[],ch=[],nb=0,bpm=80,end=0,pos=-2,playing=false,last=0,ana=null,buf=null,sr=48000,prev=0,tol=.3,AC=null,mast=null,nz=null,bg=null,mG=null,nn=0,hasMp3=false;
 const au=new Audio();au.preservesPitch=true;
+let bk=[],bn=0,linked=false,mp3on=false,linkFor=null,loff=0,lbpm=80;
 const sel=$("song");for(const k in SONGS){const o=document.createElement("option");o.value=k;o.textContent=SONGS[k].n;sel.append(o)}
 function setNotes(list,b,c){let t=0;notes=list.map(([m,d,s])=>{if(s===undefined){s=0;for(let i=0;i<4;i++)if(OPEN[i]<=m){s=i;break}}const n={m,s,f:m-OPEN[s],t,d,st:0};t+=d;return n});const lt=[1e9,1e9,1e9,1e9];for(let i=notes.length-1;i>=0;i--){const n=notes[i];if(n.m<0)continue;n.nx=lt[n.s];lt[n.s]=n.t}end=t;bpm=b;ch=c||[];$("pos").max=end;playing=false;au.pause();$("play").textContent="Play";$("res").style.display="none";seek(-2)}
-sel.onchange=()=>{hasMp3=sel.value==="mp3";for(const [id,a,b] of [["bas","Backing","Highs"],["bgn","Bass","Lows"]])document.querySelector('[data-for="'+id+'"]').parentNode.querySelector("i").textContent=hasMp3?b:a;if(hasMp3){setNotes(MP3L,60,[]);end=au.duration||60;$("pos").max=end;return}au.pause();const S=SONGS[sel.value];setNotes(S.a,S.bpm,S.ch)};
+sel.onchange=()=>{hasMp3=false;au.pause();const S=SONGS[sel.value];bk=S.bk||[];linked=mp3on&&sel.value===linkFor;setNotes(S.a,S.bpm,S.ch);if(linked){bpm=lbpm;rs()}syncUI()};
 $("mp3b").onclick=()=>$("mp3").click();
-$("mp3").onchange=e=>{const f=e.target.files[0];if(!f)return;au.src=URL.createObjectURL(f);let o=sel.querySelector("option[value=mp3]");if(!o){o=document.createElement("option");o.value="mp3";sel.append(o)}o.textContent="♪ "+f.name.replace(/\.[^.]+$/,"");sel.value="mp3";au.onloadedmetadata=()=>{end=au.duration;$("pos").max=end};MP3L=[];sel.onchange();analyze(f)};
+$("mp3").onchange=e=>{const f=e.target.files[0];e.target.value="";if(!f)return;au.src=URL.createObjectURL(f);mp3on=true;linkFor=sel.value;loff=0;lbpm=SONGS[sel.value].bpm;sel.onchange()};
 $("play").onclick=()=>{initAudio();if(pos>=end)seek(-2);playing=!playing;if(playing)rs();else au.pause();$("play").textContent=playing?"Pause":"Play";$("res").style.display="none"};
-function rs(){nb=Math.ceil(pos);nn=notes.findIndex(n=>n.t>=pos-.001);if(nn<0)nn=notes.length}
-function seek(p){pos=p;rs();for(const n of notes)if(n.t>=p-.5&&n.m>=0)n.st=0;$("pos").value=p;if(hasMp3)au.currentTime=Math.max(0,p)}
+function rs(){nb=Math.ceil(pos);nn=notes.findIndex(n=>n.t>=pos-.001);if(nn<0)nn=notes.length;bn=bk.findIndex(e=>e[0]>=pos-.001);if(bn<0)bn=bk.length}
+function seek(p){pos=p;rs();for(const n of notes)if(n.t>=p-.5&&n.m>=0)n.st=0;$("pos").value=p;if(linked)au.currentTime=Math.max(0,loff+p*60/bpm)}
 $("pos").oninput=e=>{seek(+e.target.value);$("res").style.display="none"};
 $("spd").oninput=e=>$("vs").textContent=Math.round(e.target.value*100)+"%";
 $("lat").oninput=e=>$("vl").textContent=e.target.value+" ms";
 $("bas").oninput=e=>$("vb").textContent=e.target.value+"%";
 $("zm").oninput=e=>$("vz").textContent=e.target.value+"×";
 $("bgn").oninput=e=>$("vg").textContent=e.target.value+"%";
-function initAudio(){if(AC){AC.resume();return}AC=new (window.AudioContext||window.webkitAudioContext)();mast=AC.createGain();mast.connect(AC.destination);bg=AC.createGain();bg.connect(mast);
+function initAudio(){if(AC){AC.resume();return}AC=new (window.AudioContext||window.webkitAudioContext)();mast=AC.createGain();mast.connect(AC.destination);bg=AC.createGain();bg.connect(AC.destination);
  {const src=AC.createMediaElementSource(au),mk=t=>{const a=AC.createBiquadFilter(),b=AC.createBiquadFilter();a.type=b.type=t;a.frequency.value=b.frequency.value=250;a.Q.value=b.Q.value=.707;a.connect(b);return [a,b]},lo=mk("lowpass"),hi=mk("highpass");
   mG={lo:AC.createGain(),hi:AC.createGain()};src.connect(lo[0]);src.connect(hi[0]);lo[1].connect(mG.lo);hi[1].connect(mG.hi);mG.lo.connect(AC.destination);mG.hi.connect(AC.destination)}
  const l=AC.sampleRate;nz=AC.createBuffer(1,l/2,l);const d=nz.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;setInterval(sched,25)}
 function tone(f,t,len,type,vol){const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.03);g.gain.exponentialRampToValueAtTime(.0001,t+len);o.connect(g);g.connect(mast);o.start(t);o.stop(t+len+.05)}
 function kick(t){const o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(110,t);o.frequency.exponentialRampToValueAtTime(60,t+.1);g.gain.setValueAtTime(.8,t);g.gain.exponentialRampToValueAtTime(.001,t+.15);o.connect(g);g.connect(mast);o.start(t);o.stop(t+.2)}
 function hit(t,hp,len,vol){const s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=nz;f.type="highpass";f.frequency.value=hp;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+len);s.connect(f);f.connect(g);g.connect(mast);s.start(t);s.stop(t+len)}
-function sched(){if(!AC||!playing)return;const bs=bpm*+$("spd").value/60;mast.gain.value=$("bas").value/100*.5;bg.gain.value=$("bgn").value/100*2;
- for(;nn<notes.length&&notes[nn].t<=pos+.15*bs;nn++){const n=notes[nn];if(n.m<0||hasMp3)continue;const t=AC.currentTime+Math.max(0,(n.t-pos)/bs),len=Math.max(.12,n.d/bs*.9),o=AC.createOscillator(),f=AC.createBiquadFilter(),g=AC.createGain();o.type="sawtooth";o.frequency.value=440*2**((n.m-69)/12);f.type="lowpass";f.frequency.value=480;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.7,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+len);o.connect(f);f.connect(g);g.connect(bg);o.start(t);o.stop(t+len+.05)}
+function bassNote(n,t,len){const f0=440*2**((n.m-69)/12),o=AC.createOscillator(),o2=AC.createOscillator(),f=AC.createBiquadFilter(),g=AC.createGain(),g2=AC.createGain(),k=n.m<34?1.7:n.m<42?1.35:1;
+ o.type="sawtooth";o.frequency.value=f0;o2.type="triangle";o2.frequency.value=f0*2;g2.gain.value=.45;f.type="lowpass";f.frequency.value=1200;
+ g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.8*k,t+.01);
+ if(len>.25){g.gain.exponentialRampToValueAtTime(.5*k,t+.15);g.gain.setValueAtTime(.5*k,t+Math.max(.16,len-.06))}
+ g.gain.exponentialRampToValueAtTime(.0001,t+len);
+ o.connect(f);o2.connect(g2);g2.connect(f);f.connect(g);g.connect(bg);o.start(t);o2.start(t);o.stop(t+len+.05);o2.stop(t+len+.05)}
+function pluck(m,t,len){const L=Math.min(len+.1,1.6),o=AC.createOscillator(),f=AC.createBiquadFilter(),g=AC.createGain();o.type="sawtooth";o.frequency.value=440*2**((m-69)/12);f.type="lowpass";f.frequency.value=2200;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.25,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+L);o.connect(f);f.connect(g);g.connect(mast);o.start(t);o.stop(t+L+.05)}
+function drumHit(ps,t){for(const p of ps){if(p===35||p===36)kick(t);else if(p===37||p===38||p===39||p===40)hit(t,1500,.14,.45);else if(p===42||p===44)hit(t,7000,.04,.2);else if(p===46)hit(t,7000,.22,.2);else if(p===49||p===57||p===52||p===55)hit(t,5000,.9,.22);else if(p===51||p===53||p===59||p===56)hit(t,6000,.3,.14);else if(p>=41&&p<=50)tone(70+(p-41)*14,t,.25,"sine",.3)}}
+function sched(){if(!AC||!playing)return;const bs=bpm*+$("spd").value/60;mast.gain.value=$("bas").value/100*.5;bg.gain.value=$("bgn").value/100;if(mG)mG.lo.gain.value=mG.hi.gain.value=$("bas").value/100;
+ for(;nn<notes.length&&notes[nn].t<=pos+.15*bs;nn++){const n=notes[nn];if(n.m<0)continue;bassNote(n,AC.currentTime+Math.max(0,(n.t-pos)/bs),Math.max(.14,n.d/bs*.95))}
+ if(!linked)for(;bn<bk.length&&bk[bn][0]<=pos+.15*bs;bn++){const e=bk[bn],t=AC.currentTime+Math.max(0,(e[0]-pos)/bs);if(e[3])drumHit(e[2],t);else for(const m of e[2].slice(0,5))pluck(m,t,Math.max(.1,e[1]/bs*.95))}
  for(;nb<=pos+.15*bs;nb++){if(nb>=end)break;const t=AC.currentTime+Math.max(0,(nb-pos)/bs),b=((nb%4)+4)%4;
   if(nb<0){tone(1200,t,.06,"square",.12);continue}
-  if(hasMp3)continue;
+  if(hasMp3||linked||bk.length)continue;
   if(b===0||b===2)kick(t);else hit(t,1500,.12,.45);
   hit(t,7000,.04,.22);hit(t+.5/bs,7000,.04,.14);
   if(b===0&&nb/4<ch.length)for(const n of CH[ch[nb/4]])tone(440*2**((n-69)/12),t,3.6/bs,"triangle",.14)}}
@@ -120,7 +131,7 @@ function listen(){ana.getFloatTimeDomainData(buf);const f=yin(buf);if(!f){prev=0
 function finish(){playing=false;au.pause();$("play").textContent="Play";const T=notes.filter(n=>n.m>=0),ok=T.filter(n=>n.st===1).length;
  const R=$("res");R.style.display="block";R.innerHTML="<strong>"+(T.length?Math.round(ok/T.length*100)+"%":"Done")+"</strong>"+(T.length?" · "+ok+" notes of "+T.length:"")+(ana?"":"<br>Mic was off: turn it on to get a real score.")}
 function frame(ts){const dt=Math.min(.1,(ts-last)/1000||0);last=ts;const sp=+$("spd").value;
- if(playing){pos+=dt*bpm*sp/60;const tb=tol*bpm*sp/60,lb=($("lat").value/1000)*bpm*sp/60;
+ if(playing){pos+=dt*bpm*sp/60;if(linked){au.playbackRate=sp;const ta=loff+pos*60/bpm;if(ta<0){if(!au.paused)au.pause()}else if(au.paused){au.currentTime=ta;au.play().catch(()=>{})}else pos=(au.currentTime-loff)*bpm/60}const tb=tol*bpm*sp/60,lb=($("lat").value/1000)*bpm*sp/60;
   for(const n of notes)if(n.st===0&&pos-lb>n.t+tb)n.st=ana?2:3;
   $("pos").value=pos;if(pos>end+.5)finish();
   if(hasMp3){au.playbackRate=sp;au.volume=1;if(mG){mG.lo.gain.value=$("bgn").value/100;mG.hi.gain.value=$("bas").value/100}const s=pos;if(pos<0)au.pause();else{if(Math.abs(au.currentTime-s)>.25)au.currentTime=s;if(au.paused)au.play().catch(()=>{})}}}
@@ -178,56 +189,71 @@ function parseGP(buf){
  const chars=n=>{let s="";for(let i=0;i<n;i++)s+=String.fromCharCode(u[p++]);return s};
  const bstr=mx=>{const n=b(),s=chars(n);if(mx)p+=Math.max(0,mx-n);return s};
  const ibstr=()=>{const z=i32(),q=p;const n=b(),s=chars(n);p=q+z;return s};
- const istr=()=>chars(i32());
  const ver=bstr(30),vm=/v(\d)\.(\d+)/.exec(ver);
  if(!/^FICHIER GUITAR PRO/.test(ver)||!vm)throw new Error("not-gp");
- if(vm[1]!=="4")throw new Error("gp-version:"+vm[1]+"."+vm[2]);
- for(let i=0;i<8;i++)ibstr();
+ const V=+vm[1],MN=+vm[2];
+ if(V<3||V>5)throw new Error("gp-version:"+vm[1]+"."+vm[2]);
+ for(let i=0;i<(V===5?9:8);i++)ibstr();
  for(let n=i32();n>0;n--)ibstr();
- b();i32();for(let i=0;i<5;i++){i32();istr()}
+ if(V<5)b();
+ if(V>=4){i32();for(let i=0;i<5;i++){i32();chars(i32())}}
+ if(V===5){if(MN>0)p+=19;p+=28;p+=2;for(let i=0;i<10;i++)ibstr();ibstr()}
  const bp=i32();
- p+=5;
+ if(V===5&&MN>0)b();
+ p+=V===3?4:5;
  p+=64*12;
+ if(V===5)p+=42;
  const NM=i32(),NT=i32();
  if(NM<1||NM>5000||NT<1||NT>64)throw new Error("gp-corrupt");
- const H=[];let alt=0,num=4;
- for(let i=0;i<NM;i++){const f=b(),h={open:!!(f&4),close:0,alt:0};
-  if(f&1)num=b();if(f&2)b();if(f&8)h.close=b();
-  if(f&0x10)alt=b();
-  if(f&0x20){ibstr();p+=4}
-  if(f&0x40)p+=2;
+ const H=[];let alt=0;
+ for(let i=0;i<NM;i++){if(V===5&&i>0)p++;const f=b(),h={open:!!(f&4),close:0,alt:0};
+  if(f&1)b();if(f&2)b();if(f&8)h.close=b();
+  if(V<5){if(f&0x10)alt=b();if(f&0x20){ibstr();p+=4}if(f&0x40)p+=2}
+  else{if(f&0x20){ibstr();p+=4}if(f&0x40)p+=2;if(f&0x10)alt=b();if(f&3)p+=4;if(!(f&0x10))p++;p++}
   if(h.open)alt=0;
-  h.alt=alt;if(h.close)alt=0;h.num=num;H.push(h)}
+  h.alt=alt;if(h.close)alt=0;H.push(h)}
  const T=[];
- for(let i=0;i<NT;i++){const f=b(),name=bstr(40),ns=i32(),tun=[];
+ for(let i=0;i<NT;i++){if(V===5&&(i===0||MN===0))p++;
+  const f=b(),name=bstr(40),ns=i32(),tun=[];
   for(let k=0;k<7;k++){const v=i32();if(k<ns)tun.push(v)}
   i32();i32();i32();i32();const capo=i32();p+=4;
+  if(V===5){p+=4;p+=1+12+12+12;p+=MN===0?3:4;if(MN>0){p+=4;ibstr();ibstr()}}
   T.push({drum:!!(f&1),name,ns,tun,capo,M:[]})}
+ if(V===5)p+=MN===0?1:2;
+ const TN=(t,s)=>t.tun[s]!==undefined?t.tun[s]:t.tun[t.tun.length-1]-5*(s-t.tun.length+1);
  const TUP={3:2/3,5:4/5,6:4/6,7:4/7,9:8/9,10:8/10,11:8/11,12:8/12,13:8/13};
  const bend=()=>{b();i32();for(let n=i32();n>0;n--){i32();i32();b()}};
- for(let m=0;m<NM;m++)for(const t of T){const bs=[];
-  for(let n=i32();n>0;n--){
+ const beat=t=>{
    const fl=b();let rest=!1;
    if(fl&0x40){const s=b();if(s===0||s===2)rest=!0}
    let d=2**(-sb());if(fl&1)d*=1.5;
-   if(fl&0x20){const n2=i32();d*=TUP[n2]||1}
-   if(fl&2){const h=b();
-    if(h===0){ibstr();if(i32())p+=24}
-    else{p+=3+1+1+1+4+4+1;p+=23;p+=3;p+=4;p+=28;p+=16;p+=7;p+=1;p+=7;p+=1;p-=0}}
+   if(fl&0x20)d*=TUP[i32()]||1;
+   if(fl&2){if(V===5)p+=107;else{const h=b();if(h===0){ibstr();if(i32())p+=24}else p+=V===3?124:106}}
    if(fl&4)ibstr();
-   if(fl&8){const f1=b(),f2=b();if(f1&0x20)b();if(f2&4)bend();if(f1&0x40){b();b()}if(f2&2)b()}
-   if(fl&0x10){const v=[];for(let k=0;k<7;k++)v.push(sb());const tp=i32();for(let k=1;k<7;k++)if(v[k]>=0)b();if(tp>=0)b()}
+   if(fl&8){if(V===3){const f1=b();if(f1&0x20){b();i32()}if(f1&0x40){b();b()}}else{const f1=b(),f2=b();if(f1&0x20)b();if(f2&4)bend();if(f1&0x40){b();b()}if(f2&2)b()}}
+   if(fl&0x10){if(V===5){b();p+=12;p+=MN===0?3:4}else b();
+    const v=[];for(let k=0;k<6;k++)v.push(sb());if(V===5)ibstr();const tp=i32();
+    for(let k=0;k<6;k++)if(v[k]>=0)b();if(tp>=0){b();if(V===5&&MN>0)b()}
+    if(V===5){b();if(MN>0){b();ibstr();ibstr()}}}
    const sf=b(),nt=[];
    for(let i=0;i<7;i++)if(sf&(1<<(7-i))){
     const f=b();let ty=1,fr=0;
     if(f&0x20)ty=b();
-    if(f&1){b();b()}
+    if(V<5&&(f&1)){b();b()}
     if(f&0x10)sb();
     if(f&0x20)fr=sb();
     if(f&0x80){b();b()}
-    if(f&8){const f1=b(),f2=b();if(f1&1)bend();if(f1&0x10){b();b();b();b()}if(f2&4)b();if(f2&8)b();if(f2&0x10)b();if(f2&0x20){b();b()}}
+    if(V===5){if(f&1)p+=8;b()}
+    if(f&8){const f1=b();
+     if(V===3){if(f1&1)bend();if(f1&0x10)p+=4}
+     else{const f2=b();if(f1&1)bend();if(f1&0x10)p+=V===5?5:4;if(f2&4)b();if(f2&8)b();if(f2&0x10){const h=b();if(V===5){if(h===2)p+=3;if(h===3)b()}}if(f2&0x20)p+=2}}
     nt.push({s:i,fr,ty})}
-   bs.push({d,rest,nt})}
+   if(V===5){const f2=dv.getInt16(p,!0);p+=2;if(f2&0x800)p++}
+   return{d,rest,nt}};
+ for(let m=0;m<NM;m++)for(const t of T){
+  const vc=V===5?2:1;let bs=[];
+  for(let v=0;v<vc;v++){const a=[];for(let n=i32();n>0;n--)a.push(beat(t));if(v===0)bs=a}
+  if(V===5)p++;
   t.M.push(bs)}
  const ord=[];{let i=0,at=0,pass=0,jumped=!1,g=0;
   while(i<NM&&g++<20000){const h=H[i];
@@ -238,29 +264,45 @@ function parseGP(buf){
    if(h.close)pass=0;
    i++}}
  const out=[];
- for(const t of T){if(t.drum)continue;
-  const L=[];
+ for(const t of T){
+  const L=[],ev=[];let T0=0;
   for(const mi of ord)for(const bt of t.M[mi]){
    const ns=bt.nt.filter(n=>n.ty!==3);
+   if(!bt.rest&&ns.length){const ps=ns.filter(n=>n.ty!==2).map(n=>TN(t,n.s)+n.fr+(t.drum?0:t.capo));if(ps.length)ev.push([T0,bt.d,ps])}
+   T0+=bt.d;
+   if(t.drum)continue;
    if(bt.rest||!ns.length){const l=L[L.length-1];if(l&&l[0]<0)l[1]+=bt.d;else L.push([-99,bt.d,0]);continue}
-   const n=ns.reduce((a,c)=>t.tun[c.s]+c.fr<t.tun[a.s]+a.fr?c:a);
+   const n=ns.reduce((a,c)=>TN(t,c.s)+c.fr<TN(t,a.s)+a.fr?c:a);
    if(n.ty===2&&L.length&&L[L.length-1][0]>=0){L[L.length-1][1]+=bt.d;continue}
-   L.push([t.tun[n.s]+n.fr+t.capo,bt.d,n.s])}
-  out.push({name:t.name,ns:t.ns,tun:t.tun,L})}
- const bass=out.filter(t=>/bass|basso|baix|bajo/i.test(t.name)||(t.tun.length&&t.tun[t.tun.length-1]<=29&&t.ns<=6));
- return{bp,tracks:bass.length?bass:out,all:out}}
-function addSong(name,bp,L){const k="t"+Date.now()+Math.random().toString(36).slice(2,6);SONGS[k]={n:name,bpm:bp,ch:[],a:L};const o=document.createElement("option");o.value=k;o.textContent=name;sel.append(o);return k}
+   L.push([TN(t,n.s)+n.fr+t.capo,bt.d,n.s])}
+  out.push({name:t.name,ns:t.ns,tun:t.tun,drum:t.drum,L,ev,len:T0})}
+ const ls=out.filter(t=>t.len>0).map(t=>t.len);
+ if(!ls.length||Math.max(...ls)>Math.min(...ls)*1.05)throw new Error("gp-corrupt");
+ const pit=out.filter(t=>!t.drum);
+ const bass=pit.filter(t=>/bass|basso|baix|bajo/i.test(t.name)||(t.tun.length&&t.tun[t.tun.length-1]<=29&&t.ns<=6));
+ return{bp,tracks:(bass.length?bass:pit).filter(t=>t.L.some(n=>n[0]>=0)),all:out}}
+const SYN=/vox|voc|voice|voz|chant|sing|choir|coro/i;
+const lowFix=(n,std)=>{if(n[0]<0)return n;let m=n[0];if(m<28)m+=12;return std&&n[2]<4&&m===n[0]?[m,n[1],n[2]]:[m,n[1]]};
+function addSong(name,bp,L,bk){const k="t"+Date.now()+Math.random().toString(36).slice(2,6);SONGS[k]={n:name,bpm:bp,ch:[],a:L,bk:bk||[]};const o=document.createElement("option");o.value=k;o.textContent=name;sel.append(o);return k}
 $("tabb").onclick=()=>$("tabf").click();
 $("tabf").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;const R=$("res"),base=f.name.replace(/\.[^.]+$/,"");let first=null,msg="";
  try{
   if(/\.gp\d*$/i.test(f.name)){const g=parseGP(await f.arrayBuffer());
-   g.tracks.forEach(t=>{if(!t.L.some(n=>n[0]>=0))return;const std=t.ns===4&&t.tun.every((v,i)=>v===OPEN[i]);
-    const k=addSong("♬ "+base+(g.tracks.length>1?" · "+t.name:""),g.bp,t.L.map(n=>std||n[0]<0?n:[n[0],n[1]]));if(!first)first=k});
-   if(!first)msg="No playable notes found in this file."}
+   g.tracks.forEach(t=>{const std=t.ns===4&&t.tun.every((v,i)=>v===OPEN[i])||(t.ns===5&&t.tun.slice(0,4).every((v,i)=>v===OPEN[i]));
+    const bk=[];g.all.forEach(o=>{if(o===t||(!o.drum&&SYN.test(o.name)))return;for(const [s,d,ps] of o.ev)bk.push([s,d,ps,o.drum?1:0])});bk.sort((x,y)=>x[0]-y[0]);
+    const k=addSong("♬ "+base+(g.tracks.length>1?" · "+t.name:""),g.bp,t.L.map(n=>lowFix(n,std)),bk);if(!first)first=k});
+   if(!first)msg="No playable bass notes found in this file."}
   else{const r=parseTab(await f.text());if(r)first=addSong("♬ "+base,r.bp,r.L)}
- }catch(err){const m=String(err&&err.message||"");msg=/gp-version/.test(m)?"This Guitar Pro version isn’t supported yet.<br><small>Open it in Guitar Pro / TuxGuitar / MuseScore and save it as Guitar Pro 4 (.gp4) or export MusicXML.</small>":""}
- if(!first){R.style.display="block";R.innerHTML=msg||"Couldn’t read this tab.<br><small>Supported: Guitar Pro 4 (.gp4), MusicXML (.musicxml, .xml) and text tabs (.txt)</small>";return}
+ }catch(err){const m=String(err&&err.message||"");msg=/gp-version/.test(m)?"This Guitar Pro version isn’t supported.<br><small>Supported: Guitar Pro 3, 4 and 5 (.gp3, .gp4, .gp5). Newer .gp files: export as .gp5 or MusicXML.</small>":/gp-corrupt|bounds/.test(m)?"Couldn’t read this Guitar Pro file.<br><small>It may use features that aren’t supported yet. Try saving it as .gp4 or exporting MusicXML.</small>":""}
+ if(!first){R.style.display="block";R.innerHTML=msg||"Couldn’t read this tab.<br><small>Supported: Guitar Pro 3/4/5, MusicXML (.musicxml, .xml) and text tabs (.txt)</small>";return}
+ if(mp3on){linkFor=first;loff=0;lbpm=SONGS[first].bpm}
  sel.value=first;sel.onchange()};
+function syncUI(){$("sync").style.display=linked?"flex":"none";$("ofv").textContent=loff.toFixed(2)+" s";$("tpv").textContent=lbpm.toFixed(1)+" bpm";$("mp3b").textContent=mp3on?"MP3 ✓":"Load MP3"}
+const rpt=(id,fn)=>{let iv=0;const b=$(id);b.onpointerdown=e=>{fn();clearTimeout(iv);iv=setTimeout(function r(){fn();iv=setTimeout(r,70)},350);b.setPointerCapture(e.pointerId)};b.onpointerup=b.onpointercancel=()=>clearTimeout(iv)};
+rpt("ofm",()=>{loff=+(loff-.05).toFixed(2);syncUI()});rpt("ofp",()=>{loff=+(loff+.05).toFixed(2);syncUI()});
+rpt("tpm",()=>{lbpm=+(lbpm-.1).toFixed(1);bpm=lbpm;syncUI()});rpt("tpp",()=>{lbpm=+(lbpm+.1).toFixed(1);bpm=lbpm;syncUI()});
+$("mk").onclick=()=>{const f=notes.find(n=>n.m>=0);if(linked&&f){loff=+(au.currentTime-f.t*60/bpm).toFixed(2);syncUI()}};
+$("rmv").onclick=()=>{mp3on=false;au.pause();au.removeAttribute("src");sel.onchange()};
 document.querySelectorAll(".k").forEach(k=>{const r=$(k.dataset.for),mn=+r.min,mx=+r.max,st=+r.step||1;
  const set=v=>{v=+(Math.min(mx,Math.max(mn,Math.round(v/st)*st))).toFixed(3);r.value=v;k.style.setProperty("--a",(-135+270*(v-mn)/(mx-mn))+"deg");r.dispatchEvent(new Event("input"))};
  set(+r.value);let y0=null,v0=0;
