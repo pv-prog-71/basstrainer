@@ -47,10 +47,11 @@ select{min-width:190px;font:12px ui-monospace,monospace;background:#0b0b0b;box-s
 #mic::before{content:"";width:8px;height:8px;border-radius:50%;background:#444;margin-right:8px;box-shadow:inset 0 0 2px #000}
 #mic.on::before{background:#46e07a;box-shadow:0 0 8px #46e07a}
 button:disabled{opacity:.4;cursor:not-allowed}
+.lcd[hidden]{display:none}.lcd i{font-style:normal;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#a98a3c}
 .kn{width:auto;min-width:86px}.kn .l{display:flex;gap:5px;margin-top:3px;align-items:baseline;white-space:nowrap}.kn i{margin:0}
 </style></head><body><main class="amp">
 <div class="front"><div class="r1"><h1>BassTrainer</h1><span class="sub">Learn to play</span><span class="gap"></span><select id="song" aria-label="Song"></select><button id="mp3b">Load MP3</button><input id="mp3" type="file" accept="audio/*" hidden><button id="tabb">Load tab</button><input id="tabf" type="file" accept=".musicxml,.xml,.txt,text/plain,text/xml" hidden></div>
-<div class="r2"><button id="play" class="pw">Play</button><button id="mic">Mic</button><span class="lcd"><b id="note">—</b><small id="hz"></small></span><span class="gap"></span>
+<div class="r2"><button id="play" class="pw">Play</button><button id="mic">Mic</button><span class="lcd" id="lcd" hidden><i>Note</i><b id="note">—</b><small id="hz"></small></span><span class="gap"></span>
 <div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Speed" data-for="spd"></div><input id="spd" type="range" min="0.4" max="1.25" step="0.05" value="1" hidden><span class="l"><i>Speed</i><b id="vs">100%</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Delay" data-for="lat"></div><input id="lat" type="range" min="0" max="400" step="10" value="120" hidden><span class="l"><i>Delay</i><b id="vl">120 ms</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Backing" data-for="bas"></div><input id="bas" type="range" min="0" max="100" step="5" value="60" hidden><span class="l"><i>Backing</i><b id="vb">60%</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Bass" data-for="bgn"></div><input id="bgn" type="range" min="0" max="100" step="5" value="60" hidden><span class="l"><i>Bass</i><b id="vg">60%</b></span></div></div></div>
 <div class="grille"><div class="fb"><div class="board"><canvas id="cv" aria-label="Bass tab, four strings"></canvas><div id="res" aria-live="polite"></div></div>
 <label class="ps">Position <b id="vp"></b><input id="pos" type="range" min="-2" max="20" step="0.05" value="-2"></label></div></div>
@@ -70,7 +71,7 @@ function setNotes(list,b,c){let t=0;notes=list.map(([m,d,s])=>{if(s===undefined)
 sel.onchange=()=>{hasMp3=sel.value==="mp3";if(hasMp3){setNotes([],60,[]);end=au.duration||60;$("pos").max=end;return}au.pause();const S=SONGS[sel.value];setNotes(S.a,S.bpm,S.ch)};
 $("mp3b").onclick=()=>$("mp3").click();
 $("mp3").onchange=e=>{const f=e.target.files[0];if(!f)return;au.src=URL.createObjectURL(f);let o=sel.querySelector("option[value=mp3]");if(!o){o=document.createElement("option");o.value="mp3";sel.append(o)}o.textContent="♪ "+f.name.replace(/\.[^.]+$/,"");sel.value="mp3";au.onloadedmetadata=()=>{end=au.duration;$("pos").max=end};sel.onchange()};
-$("play").onclick=()=>{initAudio();if(pos>=end)seek(-2);playing=!playing;if(playing)rs();else au.pause();$("play").textContent=playing?"Pausa":"Play";$("res").style.display="none"};
+$("play").onclick=()=>{initAudio();if(pos>=end)seek(-2);playing=!playing;if(playing)rs();else au.pause();$("play").textContent=playing?"Pause":"Play";$("res").style.display="none"};
 function rs(){nb=Math.ceil(pos);nn=notes.findIndex(n=>n.t>=pos-.001);if(nn<0)nn=notes.length}
 function seek(p){pos=p;rs();for(const n of notes)if(n.t>=p-.5&&n.m>=0)n.st=0;$("pos").value=p;if(hasMp3)au.currentTime=Math.max(0,p)}
 $("pos").oninput=e=>{seek(+e.target.value);$("res").style.display="none"};
@@ -94,10 +95,10 @@ function sched(){if(!AC||!playing)return;const bs=bpm*+$("spd").value/60;mast.ga
 let ms=null,mac=null,mt=0;
 if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){$("mic").disabled=true;$("mic").title="Microphone not available (needs https)"}
 $("mic").onclick=async()=>{
- if(ms){ms.getTracks().forEach(t=>t.stop());mac.close();clearInterval(mt);ms=null;ana=null;$("mic").classList.remove("on");$("note").textContent="—";$("hz").textContent="";return}
+ if(ms){ms.getTracks().forEach(t=>t.stop());mac.close();clearInterval(mt);ms=null;ana=null;$("mic").classList.remove("on");$("lcd").hidden=true;$("note").textContent="—";$("hz").textContent="";return}
  try{ms=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
  mac=new (window.AudioContext||window.webkitAudioContext)();sr=mac.sampleRate;const src=mac.createMediaStreamSource(ms);ana=mac.createAnalyser();ana.fftSize=4096;buf=new Float32Array(4096);src.connect(ana);
- $("mic").classList.add("on");mt=setInterval(listen,40)}
+ $("mic").classList.add("on");$("lcd").hidden=false;mt=setInterval(listen,40)}
  catch(e){ms=null;$("mic").disabled=true;$("mic").title="Microphone blocked or unavailable"}};
 function yin(b){const W=2048,M=Math.min(1500,b.length-W);let r=0;for(let i=0;i<W;i++)r+=b[i]*b[i];if(r/W<2e-5)return 0;
  const d=new Float32Array(M);for(let t=1;t<M;t++){let s=0;for(let j=0;j<W;j++){const x=b[j]-b[j+t];s+=x*x}d[t]=s}
