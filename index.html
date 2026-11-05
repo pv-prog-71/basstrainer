@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>BassTrainer</title>
-<meta name="version" content="1.0.13">
+<meta name="version" content="1.0.14">
 <meta name="theme-color" content="#0b0b0a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -54,7 +54,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .lcd[hidden],button[hidden]{display:none!important}.lcd i{font-style:normal;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#a98a3c}
 .kn{width:auto;min-width:0}.knobs{display:flex;gap:14px;align-items:flex-start;margin-left:auto}.kn .l{display:flex;gap:5px;margin-top:3px;align-items:baseline;white-space:nowrap}.kn i{margin:0}
 </style></head><body><main class="amp">
-<div class="front"><div class="r1"><h1>BassTrainer</h1><span class="sub">Learn to play</span><span class="ver">v1.0.13</span><span class="gap"></span><select id="song" aria-label="Song"></select><button id="mp3b">Load MP3</button><input id="mp3" type="file" accept="audio/*" hidden><button id="tabb">Load tab</button><input id="tabf" type="file" accept=".musicxml,.xml,.txt,text/plain,text/xml" hidden></div>
+<div class="front"><div class="r1"><h1>BassTrainer</h1><span class="sub">Learn to play</span><span class="ver">v1.0.14</span><span class="gap"></span><select id="song" aria-label="Song"></select><button id="mp3b">Load MP3</button><input id="mp3" type="file" accept="audio/*" hidden><button id="tabb">Load tab</button><input id="tabf" type="file" accept=".musicxml,.xml,.txt,.gp4,.gp3,.gp5,.gp,text/plain,text/xml,application/octet-stream" hidden></div>
 <div class="r2"><button id="play" class="pw">Play</button><button id="mic">Mic</button><span class="lcd" id="lcd" hidden><i>Note</i><b id="note">—</b><small id="hz"></small></span><span class="gap"></span>
 <div class="knobs"><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Speed" data-for="spd"></div><input id="spd" type="range" min="0.4" max="1.25" step="0.05" value="1" hidden><span class="l"><i>Speed</i><b id="vs">100%</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Delay" data-for="lat"></div><input id="lat" type="range" min="0" max="400" step="10" value="120" hidden><span class="l"><i>Delay</i><b id="vl">120 ms</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Zoom" title="Zoom the tab: fewer notes on screen" data-for="zm"></div><input id="zm" type="range" min="0.6" max="4" step="0.1" value="1.5" hidden><span class="l"><i>Zoom</i><b id="vz">1.5×</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Backing" title="Backing (built-in songs) or everything above the bass of the MP3 (Highs)" data-for="bas"></div><input id="bas" type="range" min="0" max="100" step="5" value="60" hidden><span class="l"><i>Backing</i><b id="vb">60%</b></span></div><div class="kn"><div class="k" role="slider" tabindex="0" aria-label="Bass" title="Bass synth (built-in songs) or low frequencies of the MP3 (Lows)" data-for="bgn"></div><input id="bgn" type="range" min="0" max="100" step="5" value="60" hidden><span class="l"><i>Bass</i><b id="vg">60%</b></span></div></div></div></div>
 <div class="grille"><div class="fb"><div class="board"><canvas id="cv" aria-label="Bass tab, four strings"></canvas><div id="res" aria-live="polite"></div></div>
@@ -172,10 +172,95 @@ function parseTab(x){const L=[];let bp=90;
   ev.sort((a,b)=>a[0]-b[0]);let cur=0;const seen=new Set(),E=ev.filter(e=>!seen.has(e[0])&&seen.add(e[0]));
   E.forEach((e,i)=>{const t=e[0]*.25;if(t>cur+.01)L.push([-99,t-cur,0]);const d=Math.min(2,Math.max(.25,((E[i+1]?E[i+1][0]:e[0]+4)-e[0])*.25));L.push([OPEN[e[1]]+e[2],d,e[1]]);cur=t+d})}
  return L.some(n=>n[0]>=0)?{L,bp}:null}
+function parseGP(buf){
+ const u=new Uint8Array(buf),dv=new DataView(buf);let p=0;
+ const b=()=>u[p++],sb=()=>{const v=u[p++];return v>127?v-256:v},i32=()=>{const v=dv.getInt32(p,!0);p+=4;return v};
+ const chars=n=>{let s="";for(let i=0;i<n;i++)s+=String.fromCharCode(u[p++]);return s};
+ const bstr=mx=>{const n=b(),s=chars(n);if(mx)p+=Math.max(0,mx-n);return s};
+ const ibstr=()=>{const z=i32(),q=p;const n=b(),s=chars(n);p=q+z;return s};
+ const istr=()=>chars(i32());
+ const ver=bstr(30),vm=/v(\d)\.(\d+)/.exec(ver);
+ if(!/^FICHIER GUITAR PRO/.test(ver)||!vm)throw new Error("not-gp");
+ if(vm[1]!=="4")throw new Error("gp-version:"+vm[1]+"."+vm[2]);
+ for(let i=0;i<8;i++)ibstr();
+ for(let n=i32();n>0;n--)ibstr();
+ b();i32();for(let i=0;i<5;i++){i32();istr()}
+ const bp=i32();
+ p+=5;
+ p+=64*12;
+ const NM=i32(),NT=i32();
+ if(NM<1||NM>5000||NT<1||NT>64)throw new Error("gp-corrupt");
+ const H=[];let alt=0,num=4;
+ for(let i=0;i<NM;i++){const f=b(),h={open:!!(f&4),close:0,alt:0};
+  if(f&1)num=b();if(f&2)b();if(f&8)h.close=b();
+  if(f&0x10)alt=b();
+  if(f&0x20){ibstr();p+=4}
+  if(f&0x40)p+=2;
+  if(h.open)alt=0;
+  h.alt=alt;if(h.close)alt=0;h.num=num;H.push(h)}
+ const T=[];
+ for(let i=0;i<NT;i++){const f=b(),name=bstr(40),ns=i32(),tun=[];
+  for(let k=0;k<7;k++){const v=i32();if(k<ns)tun.push(v)}
+  i32();i32();i32();i32();const capo=i32();p+=4;
+  T.push({drum:!!(f&1),name,ns,tun,capo,M:[]})}
+ const TUP={3:2/3,5:4/5,6:4/6,7:4/7,9:8/9,10:8/10,11:8/11,12:8/12,13:8/13};
+ const bend=()=>{b();i32();for(let n=i32();n>0;n--){i32();i32();b()}};
+ for(let m=0;m<NM;m++)for(const t of T){const bs=[];
+  for(let n=i32();n>0;n--){
+   const fl=b();let rest=!1;
+   if(fl&0x40){const s=b();if(s===0||s===2)rest=!0}
+   let d=2**(-sb());if(fl&1)d*=1.5;
+   if(fl&0x20){const n2=i32();d*=TUP[n2]||1}
+   if(fl&2){const h=b();
+    if(h===0){ibstr();if(i32())p+=24}
+    else{p+=3+1+1+1+4+4+1;p+=23;p+=3;p+=4;p+=28;p+=16;p+=7;p+=1;p+=7;p+=1;p-=0}}
+   if(fl&4)ibstr();
+   if(fl&8){const f1=b(),f2=b();if(f1&0x20)b();if(f2&4)bend();if(f1&0x40){b();b()}if(f2&2)b()}
+   if(fl&0x10){const v=[];for(let k=0;k<7;k++)v.push(sb());const tp=i32();for(let k=1;k<7;k++)if(v[k]>=0)b();if(tp>=0)b()}
+   const sf=b(),nt=[];
+   for(let i=0;i<7;i++)if(sf&(1<<(7-i))){
+    const f=b();let ty=1,fr=0;
+    if(f&0x20)ty=b();
+    if(f&1){b();b()}
+    if(f&0x10)sb();
+    if(f&0x20)fr=sb();
+    if(f&0x80){b();b()}
+    if(f&8){const f1=b(),f2=b();if(f1&1)bend();if(f1&0x10){b();b();b();b()}if(f2&4)b();if(f2&8)b();if(f2&0x10)b();if(f2&0x20){b();b()}}
+    nt.push({s:i,fr,ty})}
+   bs.push({d,rest,nt})}
+  t.M.push(bs)}
+ const ord=[];{let i=0,at=0,pass=0,jumped=!1,g=0;
+  while(i<NM&&g++<20000){const h=H[i];
+   if(h.open&&!jumped){at=i;pass=0}jumped=!1;
+   if(h.alt&&!(h.alt&(1<<pass))){i++;continue}
+   ord.push(i);
+   if(h.close&&pass<h.close-1){pass++;i=at;jumped=!0;continue}
+   if(h.close)pass=0;
+   i++}}
+ const out=[];
+ for(const t of T){if(t.drum)continue;
+  const L=[];
+  for(const mi of ord)for(const bt of t.M[mi]){
+   const ns=bt.nt.filter(n=>n.ty!==3);
+   if(bt.rest||!ns.length){const l=L[L.length-1];if(l&&l[0]<0)l[1]+=bt.d;else L.push([-99,bt.d,0]);continue}
+   const n=ns.reduce((a,c)=>t.tun[c.s]+c.fr<t.tun[a.s]+a.fr?c:a);
+   if(n.ty===2&&L.length&&L[L.length-1][0]>=0){L[L.length-1][1]+=bt.d;continue}
+   L.push([t.tun[n.s]+n.fr+t.capo,bt.d,n.s])}
+  out.push({name:t.name,ns:t.ns,tun:t.tun,L})}
+ const bass=out.filter(t=>/bass|basso|baix|bajo/i.test(t.name)||(t.tun.length&&t.tun[t.tun.length-1]<=29&&t.ns<=6));
+ return{bp,tracks:bass.length?bass:out,all:out}}
+function addSong(name,bp,L){const k="t"+Date.now()+Math.random().toString(36).slice(2,6);SONGS[k]={n:name,bpm:bp,ch:[],a:L};const o=document.createElement("option");o.value=k;o.textContent=name;sel.append(o);return k}
 $("tabb").onclick=()=>$("tabf").click();
-$("tabf").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;let r=null;try{r=parseTab(await f.text())}catch(_){}
- if(!r){const R=$("res");R.style.display="block";R.innerHTML="Couldn’t read this tab.<br><small>Supported: MusicXML (.musicxml, .xml) and text tabs (.txt)</small>";return}
- const k="t"+Date.now();SONGS[k]={n:"♬ "+f.name.replace(/\.[^.]+$/,""),bpm:r.bp,ch:[],a:r.L};const o=document.createElement("option");o.value=k;o.textContent=SONGS[k].n;sel.append(o);sel.value=k;sel.onchange()};
+$("tabf").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;const R=$("res"),base=f.name.replace(/\.[^.]+$/,"");let first=null,msg="";
+ try{
+  if(/\.gp\d*$/i.test(f.name)){const g=parseGP(await f.arrayBuffer());
+   g.tracks.forEach(t=>{if(!t.L.some(n=>n[0]>=0))return;const std=t.ns===4&&t.tun.every((v,i)=>v===OPEN[i]);
+    const k=addSong("♬ "+base+(g.tracks.length>1?" · "+t.name:""),g.bp,t.L.map(n=>std||n[0]<0?n:[n[0],n[1]]));if(!first)first=k});
+   if(!first)msg="No playable notes found in this file."}
+  else{const r=parseTab(await f.text());if(r)first=addSong("♬ "+base,r.bp,r.L)}
+ }catch(err){const m=String(err&&err.message||"");msg=/gp-version/.test(m)?"This Guitar Pro version isn’t supported yet.<br><small>Open it in Guitar Pro / TuxGuitar / MuseScore and save it as Guitar Pro 4 (.gp4) or export MusicXML.</small>":""}
+ if(!first){R.style.display="block";R.innerHTML=msg||"Couldn’t read this tab.<br><small>Supported: Guitar Pro 4 (.gp4), MusicXML (.musicxml, .xml) and text tabs (.txt)</small>";return}
+ sel.value=first;sel.onchange()};
 document.querySelectorAll(".k").forEach(k=>{const r=$(k.dataset.for),mn=+r.min,mx=+r.max,st=+r.step||1;
  const set=v=>{v=+(Math.min(mx,Math.max(mn,Math.round(v/st)*st))).toFixed(3);r.value=v;k.style.setProperty("--a",(-135+270*(v-mn)/(mx-mn))+"deg");r.dispatchEvent(new Event("input"))};
  set(+r.value);let y0=null,v0=0;
